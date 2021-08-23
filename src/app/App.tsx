@@ -14,6 +14,13 @@ import * as Screens from './screens'
 import * as Containers from './containers'
 import * as styles from './styles'
 
+const { setup } = require('twind')
+import twindConfig from './twind.config'
+
+if (typeof window !== `undefined`) {
+  setup(twindConfig)
+}
+
 const store = initializeStore({})
 const persistor = persistStore(store)
 // persistor.purge()
