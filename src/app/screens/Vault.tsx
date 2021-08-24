@@ -155,14 +155,7 @@ export const Vault: React.FC<any> = (props) => {
       sm: { span: 20 },
     },
   }
-
-  // const formItemLayoutWithOutLabel = {
-  //   wrapperCol: {
-  //     xs: { span: 24, offset: 0 },
-  //     sm: { span: 20, offset: 4 },
-  //   },
-  // }
-
+  
   const layout = {
     wrapperCol: { span: 24 },
   }
