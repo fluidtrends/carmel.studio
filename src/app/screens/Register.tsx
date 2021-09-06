@@ -18,6 +18,7 @@ export const Register = (props: any) => {
     const [password, setPassword] = useState('')
     const [error, setError] = useState('')
     const [showPassword, setShowPassword] = useState(false)
+    const registerEvent: any = useEvent()
 
     // const [plan, setPlan] = useState<any>('')
     // const [freePlan, setFreePlan] = useState<any>('')
@@ -60,10 +61,28 @@ export const Register = (props: any) => {
     const createPhrase = async () => {
       setWorking(true)
 
-      console.log({
-        username, password
-      })
+      // const identity = await props.eos.generateIdentity(username, password)
+      // console.log(identity)
+
+      registerEvent.send({ type: 'setup', username, password })
     }
+
+    useEffect(() => {
+      if (!registerEvent.received.id) return
+
+      // form.resetFields()
+      // setWorking(false)
+      // setWarning("")
+      
+      // if (lockEvent.received.error) {
+        // setWarning(lockEvent.received.error)
+        // return
+      // }
+
+      console.log(registerEvent)
+
+      // onDone && onDone(true)
+    }, [registerEvent.received])
 
     const imgPath = (name: string, type: string = 'png') => require(`../../../assets/${name}.${type}`).default
 
@@ -115,7 +134,7 @@ export const Register = (props: any) => {
       <div className={tw("w-2/3 p-12")}>
         <p className={tw("leading-relaxed mb-5 text-white text-2xl")}>
           { showPassword ? 
-            'Your Carmel Password will secure a local vault protected by 5 layers of security. All access to Blockchain data will be secured locally in your vault, including wallet private keys.' : 
+            'Your Carmel Password secures your local Carmel Vault protected by 5 layers of security. Your sensitive data like Blockchain private keys is all stored securely in your local Carmel Vault, on this computer.' : 
             'Your Carmel ID is your entry to the Blockchain world as a builder and your first step in your DeDev Journey. Carmel IDs are fully decentralized digital identities that give you 100% control over your data.'
           }
         </p>

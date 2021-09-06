@@ -16,15 +16,17 @@ export const useEvent = () => {
     }
   
     useEffect(() => {
-        const listener = (e: any, data: any) => {
-            if (id === data.id) {
-                setReceived(data) 
+        (async () => {
+            const listener = (e: any, data: any) => {
+                if (id === data.id) {
+                    setReceived(data) 
+                }
             }
-        }
 
-        ipcRenderer.on('carmel', listener)
+            ipcRenderer.on('carmel', listener)
 
-        return () => ipcRenderer.removeListener('carmel', listener)
+            return () => ipcRenderer.removeListener('carmel', listener)
+        })()
     }, [id])
 
     return { send, id, received }

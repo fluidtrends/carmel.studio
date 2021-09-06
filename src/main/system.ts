@@ -20,6 +20,7 @@ export const userHome = process.env[(process.platform === 'win32') ? 'USERPROFIL
 
 export const env = () => {
   const home = path.resolve(userHome, '.carmel')
+  const secrets = path.resolve(home, 'secrets')
   const lock = path.resolve(home, 'secrets', '.data', '.lock')
   const cache = path.resolve(home, 'cache')
   const bin = path.resolve(home, 'bin')
@@ -36,6 +37,7 @@ export const env = () => {
     bin: { path: bin, exists: fs.existsSync(bin) },
     cache: { path: cache, exists: fs.existsSync(cache) },
     sdk: { path: sdk, exists: fs.existsSync(sdk) },
+    secrets: { path: secrets, exists: fs.existsSync(secrets) },
     node: { path: node, exists: fs.existsSync(node) },
     lock: { path: lock, exists: fs.existsSync(lock) },
     servers: { path: servers, exists: fs.existsSync(servers) },
@@ -54,9 +56,15 @@ export const update = (data: any) => {
   reload()
 }
 
-export const init = (data: any) => {
-  _session.create()
-  update(data)
+export const lock = async (pass: string) => _session.lock(pass)
+export const unlock = async (pass: string) => _session.unlock(pass)
+
+export const init = (data: any, password: string) => {
+  (async () => {
+    await _session.create()
+    update(data)
+    await lock(password)
+  })()
 }
 
 export const start = () => {

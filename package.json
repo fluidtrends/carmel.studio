@@ -184,6 +184,7 @@
     "axios": "^0.19.2",
     "babel-loader": "^8.2.2",
     "body-parser": "^1.19.0",
+    "cassi": "^1.6.1",
     "chai": "^4.2.0",
     "chai-as-promised": "^7.1.1",
     "codemirror": "^5.55.0",
