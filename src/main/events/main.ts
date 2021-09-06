@@ -167,10 +167,10 @@ export const startSession = async (data: any) => {
     system.update({ loadedTimestamp: Date.now() })
     const session = system.session
 
-    const sdk = data.node || session.sdk.versions[0]
-    const node = data.sdk || session.node.versions[0]
+    // const sdk = data.node || session.sdk.versions[0]
+    // const node = data.sdk || session.node.versions[0]
 
-    const cwd = env.home.path
+    // const cwd = env.home.path
 
     const result = {}
     //await carmel({ 
