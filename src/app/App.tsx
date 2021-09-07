@@ -33,6 +33,7 @@ const Routes = (props: any) => {
   const chains = {
     anon: eos.anonChain()
   }
+
   return (
     <Switch>
     { props.routes.map((route: any) => {

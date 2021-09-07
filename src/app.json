@@ -30,6 +30,11 @@
         "screen": "NewProduct",
         "container": "Simple"
     }, {
+        "path": "/dashboard",
+        "id": "dashboard",
+        "screen": "Dashboard",
+        "container": "Main"
+    }, {
         "path": "/products",
         "id": "products",
         "screen": "Products",

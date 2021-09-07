@@ -23,15 +23,15 @@ export const Start: React.FC<StartScreenProps> = (props) => {
   useEffect(() => {
     if (!loadEvent.received.id) return
    
-    console.log(loadEvent)
+    const { session } = loadEvent.received
 
-    // if (!loadEvent.received.session) {
+    if (!session) {
       dispatch(replace('/welcome'))
-    //   return 
-    // }
+      return 
+    }
 
-    // const screen = loadEvent.received.session.productId ? '/product' : '/products'
-    // dispatch(replace(screen))
+    const screen = session.productId ? '/product' : '/dashboard'
+    dispatch(replace(screen))
   }, [loadEvent.received])
 
   return (<div style={styles.screen}>

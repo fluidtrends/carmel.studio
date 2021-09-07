@@ -4,6 +4,49 @@ import * as system from '../system'
 import path from 'path'
 import fs from 'fs'
 
+// export const createNewIdentity = async (credentials: any) => {
+//     // system.reload()
+//     // const env = system.env()
+//     // const isLocked = env.lock.exists
+    
+//     console.log("---createNewIdentity 0")
+//     const identity = createId({ credentials })
+//     // console.log("---createNewIdentity 1", identity)
+
+//     // console.log(eos)
+//     // const identity = ""//await eos.generateIdentity(credentials.username, credentials.password)
+
+//     // await send({ 
+//     //     id: credentials.id,
+//     //     identity,
+//     //     type: 'createNewIdentity', 
+//     // })
+
+//     console.log("---createNewIdentity 2", "sent", identity)
+    
+//     try { 
+//         // await system.unlock(credentials.password)
+//         // await send({ 
+//         //     id: credentials.id,
+//         //     type: 'vaultUnlocked', 
+//         // })
+
+//         return ({
+//             identity,
+//             credentials
+//         })
+
+//     } catch (e) {
+//         // console.log(e)
+//         // await send({ 
+//         //     id: credentials.id,
+//         //     type: 'createNewIdentityError',
+//         //     error: e.message
+//         // })        
+//     }
+// }
+
+
 export const unlockVault = async (credentials: any) => {
     const result = await carmel({ cmd: 'data', args: [{
             name: "unlock",

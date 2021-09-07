@@ -4,6 +4,8 @@ import fs from 'fs'
 import { Server } from './node'
 import { send } from '../main/events'
 import shortid from 'shortid'
+import { customAlphabet } from 'nanoid'
+const nanoid = customAlphabet('2345abcdefghijklmnopqrstuvwxyz', 12)
 
 import * as window from './window'
 import * as events from './events'
@@ -20,13 +22,14 @@ export const userHome = process.env[(process.platform === 'win32') ? 'USERPROFIL
 
 export const env = () => {
   const home = path.resolve(userHome, '.carmel')
+  const secrets = path.resolve(home, 'secrets')
   const lock = path.resolve(home, 'secrets', '.data', '.lock')
   const cache = path.resolve(home, 'cache')
   const bin = path.resolve(home, 'bin')
   const servers = path.resolve(home, 'servers')
   const sdk = path.resolve(cache, '@carmel', 'sdk', 'default')
   const node = path.resolve(cache, 'node', 'default')
-  const machineId = session ? `${session.id}` : shortid.generate()
+  const machineId = session ? `${session.id}` : nanoid()
 
   const ipfs = path.resolve(home, 'ipfs')
   const ipfsServer = path.resolve(servers, 'start', 'ipfs')
@@ -36,6 +39,7 @@ export const env = () => {
     bin: { path: bin, exists: fs.existsSync(bin) },
     cache: { path: cache, exists: fs.existsSync(cache) },
     sdk: { path: sdk, exists: fs.existsSync(sdk) },
+    secrets: { path: secrets, exists: fs.existsSync(secrets) },
     node: { path: node, exists: fs.existsSync(node) },
     lock: { path: lock, exists: fs.existsSync(lock) },
     servers: { path: servers, exists: fs.existsSync(servers) },
@@ -54,9 +58,15 @@ export const update = (data: any) => {
   reload()
 }
 
-export const init = (data: any) => {
-  _session.create()
-  update(data)
+export const lock = async (pass: string) => _session.lock(pass)
+export const unlock = async (pass: string) => _session.unlock(pass)
+export const setSecret = async (key: string, values: any) => _session.setSecret(key, values)
+export const getSecret = async (key: string) => _session.getSecret(key)
+
+export const init = async (data: any, password: string) => {  
+  const instanceId = nanoid()
+  await _session.create()
+  update({ ...data, instanceId })
 }
 
 export const start = () => {
