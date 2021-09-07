@@ -28,6 +28,12 @@ export const Register = (props: any) => {
     const registerEvent: any = useEvent()
     const dispatch = useDispatch()
 
+    const GRADIENTS = {
+      "steel": "bg-gradient-to-r from-blue-gray-900 via-purple-900 to-blue-gray-900",
+      "ocean": "bg-gradient-to-tr from-green-300 via-blue-500 to-purple-600",
+      "field": "bg-gradient-to-r from-yellow-200 via-green-200 to-green-500"
+    }
+
     // const [plan, setPlan] = useState<any>('')
     // const [freePlan, setFreePlan] = useState<any>('')
     useAnimatedText([['animTitle', 'line']])
@@ -182,9 +188,11 @@ export const Register = (props: any) => {
         </div>
     </div>)
 
-    return (<div className={tw(`bg-cover bg-bottom min-h-screen w-full`)} style={{ 
-      backgroundImage: `url(${imgPath(showPhrase ? 'bg3' : showPassword ? 'bg2' : 'bg1', 'jpg')})`
+    
+    const gradient = showPhraseForm ? "field" : showPassword ? "ocean" : "steel"
+    return (<div className={tw(`bg-cover bg-bottom min-h-screen w-full ${GRADIENTS[gradient]}`)} style={{ 
     }}>         
+
         <div className={tw(`w-full min-h-screen bg-black bg-opacity-70 text-white text-4xl flex flex-col items-center`)}>
             <UserCircleIcon className={tw("h-24 w-25 text-white mt-20")}/>
             <p className={tw("animTitle leading-relaxed text-white text-5xl")}>
