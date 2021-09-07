@@ -46,21 +46,15 @@ module.exports = [
     use: ['file-loader'],
   },
   {
-    test: /\.node$/,
-    use: 'node-loader',
-  },
-  {
-    test: /\.m?(js)$/,
+    test: /\.(m?js|node)$/,
     parser: { amd: false },
-    exclude: /(node_modules|\.webpack|mocha)/,
-    use: [
-      {
-        loader: '@marshallofsound/webpack-asset-relocator-loader',
-        options: {
-          outputAssetBase: 'native_modules',
-        },
+    exclude: /node_modules\/(fs-extra|@npmcli|node-gyp)/,
+    use: {
+      loader: '@marshallofsound/webpack-asset-relocator-loader',
+      options: {
+        outputAssetBase: 'native_modules',
       },
-    ],
+    },
   },
   {
     test: /node_modules[/\\](mocha|@npmcli|node-gyp)/i,
@@ -98,7 +92,7 @@ module.exports = [
   },
   {
     test: /\.ts(x?)$/,
-    exclude: /(node_modules|\.webpack)/,
+    exclude: /(node_modules\/(?!@carmel\/eos).*|\.webpack)/,
     use: [
       {
         loader: 'ts-loader',
