@@ -4,6 +4,8 @@ import fs from 'fs'
 import { Server } from './node'
 import { send } from '../main/events'
 import shortid from 'shortid'
+import { customAlphabet } from 'nanoid'
+const nanoid = customAlphabet('2345abcdefghijklmnopqrstuvwxyz', 12)
 
 import * as window from './window'
 import * as events from './events'
@@ -27,7 +29,7 @@ export const env = () => {
   const servers = path.resolve(home, 'servers')
   const sdk = path.resolve(cache, '@carmel', 'sdk', 'default')
   const node = path.resolve(cache, 'node', 'default')
-  const machineId = session ? `${session.id}` : shortid.generate()
+  const machineId = session ? `${session.id}` : nanoid()
 
   const ipfs = path.resolve(home, 'ipfs')
   const ipfsServer = path.resolve(servers, 'start', 'ipfs')
@@ -58,13 +60,13 @@ export const update = (data: any) => {
 
 export const lock = async (pass: string) => _session.lock(pass)
 export const unlock = async (pass: string) => _session.unlock(pass)
+export const setSecret = async (key: string, values: any) => _session.setSecret(key, values)
+export const getSecret = async (key: string) => _session.getSecret(key)
 
-export const init = (data: any, password: string) => {
-  (async () => {
-    await _session.create()
-    update(data)
-    await lock(password)
-  })()
+export const init = async (data: any, password: string) => {  
+  const instanceId = nanoid()
+  await _session.create()
+  update({ ...data, instanceId })
 }
 
 export const start = () => {

@@ -15,7 +15,7 @@ import axios from 'axios'
 import fs from 'fs-extra'
 import path from 'path'
 // import { eos } from '../services/blockchain'
-import { createId } from '@carmel/eos/src/crypto'
+import { generateIdentity } from '@carmel/eos/src/crypto'
 
 const IPFS_GATEWAY = "cloudflare-ipfs.com"
 const USER_HOME = process.env[(process.platform === 'win32') ? 'USERPROFILE' : 'HOME']
@@ -108,13 +108,11 @@ export const setup = async (e: any) => {
 
     // console.log(settings.rows)
 
-    await send({ id: e.id, type: 'setup', status: 'Preparing your environment ...' })    
-
     const username = e.username
-    const id = createId({ credentials: e })
-    const identity = { username, ...id }
+    const { publicKey, privateKey, mnemonic } = generateIdentity({ credentials: e })
+    const identity = { username, publicKey }
 
-    system.init({
+   await system.init({
         identity,
         node: {
         },
@@ -127,6 +125,7 @@ export const setup = async (e: any) => {
         bundles: {
         }
     }, e.password)    
-    
-    await send({ id: e.id, type: 'settingUp', identity, username, status: 'Your Carmel Environment Is Ready', done: true })
+
+    await system.setSecret('identity', { privateKey, username })
+    await send({ id: e.id, type: 'setupDone', mnemonic, username, status: 'Your Carmel Environment Is Ready', done: true })
 }

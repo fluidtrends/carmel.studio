@@ -49,7 +49,10 @@ export const load = (skipEnv: boolean = false) => {
 }
 
 export const init = async() => {
-    const service = `carmel.secrets`
+    const { instanceId } = load(true)
+    if (!instanceId) return 
+
+    const service = `carmel.secrets.${instanceId}`
     _vault = new Vault({ service, name: '.data', root: path.resolve(system.env().secrets.path) })
     await _vault.initialize()
 }
@@ -58,10 +61,10 @@ export const setSecret = async (key: string, values: any) => {
     await init()
     if (!secretsVault() || secretsVault().isLocked) return
     try {
-        const oldKey = secretsVault().read(key) || {}
-        const all =  { ...oldKey, ...JSON.parse(values) }
-        secretsVault().write(key, all)
+        const oldKey = secretsVault().read(key)
+        secretsVault().write(key,  "string" === typeof values ? values : Object.assign({}, oldKey && JSON.parse(oldKey), values))
     } catch (e) {
+        console.log(e)
     }
 }
 
@@ -98,8 +101,6 @@ export const unlock = async (password: string) => {
 }
 
 export const create = async() => {
-    console.log("session create")
-
     if (!exists()) {
         system.env().home.exists || fs.mkdir(system.env().home.path)
         system.env().secrets.exists || fs.mkdir(system.env().secrets.path)

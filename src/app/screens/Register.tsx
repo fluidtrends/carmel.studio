@@ -3,8 +3,12 @@ import { LoginScreenProps } from '../types'
 import * as styles from '../styles'
 import { Plans, AuthForm } from '../components'
 const { tw } = require('twind')
-import { UserCircleIcon } from '@heroicons/react/solid'
+import { BadgeCheckIcon, UserCircleIcon } from '@heroicons/react/solid'
 import { useEvent, useAnimatedText } from '../hooks'
+import { constants } from 'zlib'
+import { clipboard  } from 'electron'
+import { useSelector, useDispatch } from "react-redux"
+import { replace } from 'connected-react-router'
 
 /**
  * 
@@ -13,12 +17,16 @@ import { useEvent, useAnimatedText } from '../hooks'
 export const Register = (props: any) => {  
     const usernameField = useRef<any>()
     const passwordField = useRef<any>()
+    const [phraseCopied, setPhraseCopied] = useState(false)
     const [working, setWorking] = useState(false)
     const [username, setUsername] = useState('')
     const [password, setPassword] = useState('')
+    const [phrase, setPhrase] = useState('')
     const [error, setError] = useState('')
     const [showPassword, setShowPassword] = useState(false)
+    const [showPhrase, setShowPhrase] = useState(false)
     const registerEvent: any = useEvent()
+    const dispatch = useDispatch()
 
     // const [plan, setPlan] = useState<any>('')
     // const [freePlan, setFreePlan] = useState<any>('')
@@ -58,30 +66,42 @@ export const Register = (props: any) => {
       setShowPassword(true)
     }
 
+    const getStarted = async () => {
+      dispatch(replace('/dashboard'))
+    }
+
+    const copyPhrase = async () => {
+      clipboard.writeText(phrase)
+      setPhraseCopied(true)
+      setTimeout(getStarted, 1000)
+    }
+
     const createPhrase = async () => {
       setWorking(true)
-
-      // const identity = await props.eos.generateIdentity(username, password)
-      // console.log(identity)
-
       registerEvent.send({ type: 'setup', username, password })
     }
 
     useEffect(() => {
-      if (!registerEvent.received.id) return
+      if (!registerEvent.received.id) return      
 
-      // form.resetFields()
-      // setWorking(false)
-      // setWarning("")
+      if (registerEvent.received.error) {
+        setError(registerEvent.received.error)
+        return
+      }
+
+      const { mnemonic } = registerEvent.received
+
+      if (!mnemonic) {
+        setError('The registration failed')
+        setWorking(false)
+        setTimeout(() => { setError('') }, 2000)
+        return 
+      }
       
-      // if (lockEvent.received.error) {
-        // setWarning(lockEvent.received.error)
-        // return
-      // }
+      setPhrase(mnemonic)
+      setShowPhrase(true)
+      setWorking(false)
 
-      console.log(registerEvent)
-
-      // onDone && onDone(true)
     }, [registerEvent.received])
 
     const imgPath = (name: string, type: string = 'png') => require(`../../../assets/${name}.${type}`).default
@@ -111,6 +131,17 @@ export const Register = (props: any) => {
       </div>
     )
 
+    const showPhraseForm = () => (
+      <div className={tw("w-1/3 bg-white rounded-lg p-8 flex flex-col w-full justify-center")}>
+          <div className={tw("animPhrase relative mb-4 text-xl text-gray-700 text-center")}>
+            { phraseCopied ? <BadgeCheckIcon className={tw("h-24 w-24 text-primary mt-20 mt-auto mx-auto")}/> : phrase }
+          </div>
+          { phrase && !phraseCopied && <button onClick={copyPhrase} className={tw("text-white bg-primary border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded text-lg")}>
+            Copy To Clipboard
+          </button> }
+      </div>
+    )
+
     const showError = () => {
       if (!error) return <div/>
       return (<div className={tw("bg-red-200 relative text-red-500 py-3 px-3 rounded-lg text-medium")}>
@@ -127,13 +158,15 @@ export const Register = (props: any) => {
         )
       }
 
-      return showPassword ? showPasswordForm() : showUsernameForm()
+      return  showPhrase ? showPhraseForm() : showPassword ? showPasswordForm() : showUsernameForm()
     }
 
     const FormIntro = () => (
       <div className={tw("w-2/3 p-12")}>
         <p className={tw("leading-relaxed mb-5 text-white text-2xl")}>
-          { showPassword ? 
+          { showPhrase ? 
+            'Your Carmel Recovery Phrase allows you to restore your account in case you lose your Carmel Private Key. Copy it and save it somewhere safe.' : 
+            showPassword ? 
             'Your Carmel Password secures your local Carmel Vault protected by 5 layers of security. Your sensitive data like Blockchain private keys is all stored securely in your local Carmel Vault, on this computer.' : 
             'Your Carmel ID is your entry to the Blockchain world as a builder and your first step in your DeDev Journey. Carmel IDs are fully decentralized digital identities that give you 100% control over your data.'
           }
@@ -150,12 +183,12 @@ export const Register = (props: any) => {
     </div>)
 
     return (<div className={tw(`bg-cover bg-bottom min-h-screen w-full`)} style={{ 
-      backgroundImage: `url(${imgPath(showPassword ? 'bg2' : 'bg1', 'jpg')})`
+      backgroundImage: `url(${imgPath(showPhrase ? 'bg3' : showPassword ? 'bg2' : 'bg1', 'jpg')})`
     }}>         
         <div className={tw(`w-full min-h-screen bg-black bg-opacity-70 text-white text-4xl flex flex-col items-center`)}>
             <UserCircleIcon className={tw("h-24 w-25 text-white mt-20")}/>
             <p className={tw("animTitle leading-relaxed text-white text-5xl")}>
-              { showPassword ? `@${username}` : 'Get Your Carmel ID'}
+              { showPhrase ? 'Save Your Carmel Recovery Phrase' : showPassword ? `@${username}` :  'Get Your Carmel ID'}
             </p>
             { showError() }
             <Form/>
