@@ -4,6 +4,7 @@ import { Layout, Radio, Tag, Dropdown, Typography, Tabs, Badge, Spin, Menu, Butt
 import { useDispatch, useSelector } from "react-redux"
 import { replace } from 'connected-react-router'
 import { useEvent } from '../hooks'
+import { UserCircleIcon, ChevronDownIcon, CreditCardIcon, LockOpenIcon, LockClosedIcon, KeyIcon, IdentificationIcon, CogIcon } from '@heroicons/react/solid'
 
 import { 
   UserOutlined, 
@@ -17,6 +18,7 @@ import {
   NotificationOutlined,
   FolderOutlined
 } from '@ant-design/icons'
+const { tw } = require('twind')
 
 const { Header, Content, Sider } = Layout
 const { TabPane } = Tabs;
@@ -54,15 +56,15 @@ export const MainHeader: React.FC<MainHeaderComponentProps> = (props) => {
     //   //   }
     // }
 
-    const onSettings = (e: any) => {
-      browser.send({ type: 'hideWebPreview' })
-      dispatch(replace(`/settings`))  
-    }
+    // const onSettings = (e: any) => {
+    //   browser.send({ type: 'hideWebPreview' })
+    //   dispatch(replace(`/settings`))  
+    // }
 
-    const onVault = (e: any) => {
-      browser.send({ type: 'hideWebPreview' })
-      dispatch(replace(`/vault`))  
-    }
+    // const onVault = (e: any) => {
+    //   browser.send({ type: 'hideWebPreview' })
+    //   dispatch(replace(`/vault`))  
+    // }
 
     const onAccountSelect = (e: any) => {
         const { key } = e
@@ -70,22 +72,73 @@ export const MainHeader: React.FC<MainHeaderComponentProps> = (props) => {
         dispatch(replace(`/${key}`))  
     }
 
-    const onContent = (e: any) => {
-      browser.send({ type: 'hideWebPreview' })
-      dispatch(replace(`/content`))  
-    }
+    // const onContent = (e: any) => {
+    //   browser.send({ type: 'hideWebPreview' })
+    //   dispatch(replace(`/content`))  
+    // }
 
     const asset = (id: string) => require(`../../../assets/${id}`).default
+
+    const MENUITEMS = [{
+      title: "Profile",
+      icon: IdentificationIcon,
+      id: "profile",
+      link: "/profile"
+    },
+    {
+      title: "Wallet",
+      icon: CreditCardIcon,
+      id: "wallet",
+      link: "/profile"
+    },
+    {
+      title: "Vault",
+      icon: KeyIcon,
+      id: "vault",
+      link: "/profile"
+    }, 
+    {
+      title: "Settings",
+      icon: CogIcon,
+      id: "settings",
+      link: "/settings"
+    }]
     
+    const onUserDropdownSelect = (e: any) => {
+      dispatch(replace(e.link))
+    }
+
+    const renderUserDropdown = () => (
+        <div className={tw("p-10")}>
+          <div className={tw("dropdown inline-block relative")}>
+            <button className={tw("bg-white text-primary font-semibold py-2 px-4 border-1 hover:bg-primary hover:text-white border-primary rounded inline-flex items-center")}>
+              <UserCircleIcon className={tw("h-5 w-5 mr-2")}/>
+              <span className={tw("mr-1")}>{ session.identity.username }</span>
+              <ChevronDownIcon className={tw("h-5 w-5 ml-2")}/>
+            </button>
+            <ul className={tw("dropdown-menu absolute hidden text-gray-400 pt-1 w-full")}>
+              { MENUITEMS.map((item: any, i: number) => 
+                  <li className={tw("w-full")} key={i}>
+                    <a onClick={() => onUserDropdownSelect(item)} className={tw(`${i === 0 || i === MENUITEMS.length - 1 ? 'rounded-t': ''} w-full pl-2 bg-white hover:bg-primary-100 py-2 block whitespace-no-wrap hover:text-primary flex flex-row`)}>
+                      <item.icon className={tw("h-5 w-5 mr-2")}/>
+                      { item.title }
+                    </a>
+                  </li>
+              )}
+            </ul>
+          </div>
+      </div>
+    )
+
     const accountMenu = <Menu onClick={onAccountSelect}>
-      { session && session.user && <Menu.Item key="profile" icon={<SolutionOutlined />}>
+      { session && session.identity && <Menu.Item key="profile" icon={<SolutionOutlined />}>
         Your Profile
       </Menu.Item> }
-      { (!session || !session.user) && <Menu.Item key="login" icon={<UserOutlined />}>
+      { (!session || !session.identity) && <Menu.Item key="login" icon={<UserOutlined />}>
        Login
       </Menu.Item>}
-      { (!session || !session.user) && <Menu.Divider/>}
-      { (!session || !session.user) && <Menu.Item key="register">
+      { (!session || !session.identity) && <Menu.Divider/>}
+      { (!session || !session.identity) && <Menu.Item key="register">
         <Button type="primary">Sign Up</Button>
       </Menu.Item> }
     </Menu>
@@ -106,17 +159,16 @@ export const MainHeader: React.FC<MainHeaderComponentProps> = (props) => {
   //  { session && session.user ? session.user.plan_name && session.user.plan_name !== "free" && <Tag color="green" style={{margin: 10}}> { session.user.plan_name.split('.')[0].toUpperCase() } </Tag> }
 
   const renderUserMenu = () => {
-    return <div/>
-    // <Dropdown overlay={accountMenu}>
-    //         <Badge count={notifications.user.length} overflowCount={5} offset={[0, 2]}>
-    //           <Button icon={<UserOutlined/>} size='large' style={{
-    //               marginLeft: 10
-    //             }}>
-    //               { session && session.user ? session.user.username : ""} 
-    //               <CaretDownOutlined/>
-    //           </Button>
-    //         </Badge>
-    //       </Dropdown>
+    return (<Dropdown overlay={accountMenu}>
+            <Badge count={notifications.user.length} overflowCount={5} offset={[0, 2]}>
+              <Button icon={<UserOutlined/>} size='large' style={{
+                  marginLeft: 10
+                }}>
+                  { session && session.identity ? session.identity.username : ""} 
+                  <CaretDownOutlined/>
+              </Button>
+            </Badge>
+        </Dropdown>)
   }
   return (<div style={{ 
     display: "flex",
@@ -151,8 +203,13 @@ export const MainHeader: React.FC<MainHeaderComponentProps> = (props) => {
           flex: 1,
           justifyContent: "flex-end"
         }}>
-          { renderUserMenu() }
-          <Button icon={<SettingOutlined/>} size='large' onClick={onSettings} style={{
+          { renderUserDropdown() }          
+       </div>  
+    </div>
+  </div>)
+}
+
+{/* <Button icon={<SettingOutlined/>} size='large' onClick={onSettings} style={{
               marginLeft: 10,
               border: "none"
             }}>
@@ -161,8 +218,4 @@ export const MainHeader: React.FC<MainHeaderComponentProps> = (props) => {
               marginLeft: 10,
               border: "none"
             }}>
-          </Button>
-       </div>  
-    </div>
-  </div>)
-}
+          </Button> */}

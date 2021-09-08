@@ -112,7 +112,11 @@ export const setup = async (e: any) => {
     const { publicKey, privateKey, mnemonic } = generateIdentity({ credentials: e })
     const identity = { username, publicKey }
 
+    const now = Date.now()
+
    await system.init({
+        createdTimestamp: now,
+        loadedTimestamp: now,
         identity,
         node: {
         },
@@ -127,5 +131,13 @@ export const setup = async (e: any) => {
     }, e.password)    
 
     await system.setSecret('identity', { privateKey, username })
-    await send({ id: e.id, type: 'setupDone', mnemonic, username, status: 'Your Carmel Environment Is Ready', done: true })
+    await send({ 
+        id: e.id, 
+        type: 'setupDone', 
+        mnemonic, 
+        session: system.session,
+        username, 
+        status: 'Your Carmel Environment Is Ready', 
+        done: true 
+    })
 }

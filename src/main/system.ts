@@ -29,7 +29,7 @@ export const env = () => {
   const servers = path.resolve(home, 'servers')
   const sdk = path.resolve(cache, '@carmel', 'sdk', 'default')
   const node = path.resolve(cache, 'node', 'default')
-  const machineId = session ? `${session.id}` : nanoid()
+  const machineId = session && session.machineId ? `${session.machineId}` : nanoid()
 
   const ipfs = path.resolve(home, 'ipfs')
   const ipfsServer = path.resolve(servers, 'start', 'ipfs')

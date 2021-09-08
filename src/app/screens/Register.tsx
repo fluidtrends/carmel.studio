@@ -5,6 +5,7 @@ import { Plans, AuthForm } from '../components'
 const { tw } = require('twind')
 import { BadgeCheckIcon, UserCircleIcon } from '@heroicons/react/solid'
 import { useEvent, useAnimatedText } from '../hooks'
+import { initialize } from '../data'
 import { constants } from 'zlib'
 import { clipboard  } from 'electron'
 import { useSelector, useDispatch } from "react-redux"
@@ -95,7 +96,7 @@ export const Register = (props: any) => {
         return
       }
 
-      const { mnemonic } = registerEvent.received
+      const { mnemonic, session } = registerEvent.received
 
       if (!mnemonic) {
         setError('The registration failed')
@@ -103,7 +104,8 @@ export const Register = (props: any) => {
         setTimeout(() => { setError('') }, 2000)
         return 
       }
-      
+
+      dispatch(initialize({ session, products: [], profile: { } }))      
       setPhrase(mnemonic)
       setShowPhrase(true)
       setWorking(false)
