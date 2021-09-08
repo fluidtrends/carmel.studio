@@ -51,25 +51,6 @@ const challenge = (state: any = {}, action: any) => {
   }
 }
 
-const env = (state: any = {}, action: any) => {
-  switch(action.type) {
-    case INITIALIZE: 
-      return action.data.env
-    default:
-      return state
-  }
-}
-
-
-const profile = (state: any = {}, action: any) => {
-  switch(action.type) {
-    case INITIALIZE: 
-      return action.data.profile
-    default:
-      return state
-  }
-}
-
 const session = (state: any = {}, action: any) => {
   switch(action.type) {
     case INITIALIZE: 
@@ -92,8 +73,6 @@ export const initializeReducers = (history: any) => persistReducer({
     products,
     product,
     challenge,
-    session,
-    profile,
-    env,
+    session
   })
 )

@@ -41,7 +41,6 @@ const Routes = (props: any) => {
         const containerId: keyof typeof Containers = route.container
         const Screen: any = Screens[screenId]
         const Container: any = Containers[containerId]
-
       return (<Route strict sensitive exact key={route.id} path={route.path}>
           <Container 
               width={width}

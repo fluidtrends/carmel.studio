@@ -36,7 +36,7 @@ export const Vault: React.FC<any> = (props) => {
 
   const loadSecrets = () => {
     setWorking(true)
-    secretsEvent.send({ type: "getAllSecrets" })
+    // secretsEvent.send({ type: "getAllSecrets" })
   }
 
   const onNewSecret = () => {

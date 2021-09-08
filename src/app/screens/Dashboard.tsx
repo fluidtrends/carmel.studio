@@ -13,6 +13,15 @@ import { useEvent } from '../hooks'
 export const Dashboard: React.FC<any> = (props) => {
   const dispatch = useDispatch()
   const selectEvent: any = useEvent() 
+  const session = useSelector((state: State) => state.session) 
+
+  useEffect(() => {
+    if (!session || !session.env) {
+      return 
+    }
+    console.log(session)    
+    // loadEvent.send({ type: 'startSession' })
+  }, [])
 
   return (<div style={{
     display: "flex",
@@ -25,5 +34,6 @@ export const Dashboard: React.FC<any> = (props) => {
     flexWrap: "wrap"
   }}>
     Welcome
+
   </div>)
 }

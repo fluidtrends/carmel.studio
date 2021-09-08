@@ -13,10 +13,17 @@ import { initialize } from '../data'
  * @param props 
  */
 export const Start: React.FC<StartScreenProps> = (props) => {
+  const session = useSelector((state: State) => state.session) 
   const loadEvent: any = useEvent() 
   const dispatch = useDispatch()
 
   useEffect(() => {
+    // if (session && session.env) {
+    //   const screen = session.productId ? '/product' : '/dashboard'
+    //   dispatch(replace(screen))      
+    //   return 
+    // }
+    
     loadEvent.send({ type: 'startSession' })
   }, [])
 
