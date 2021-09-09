@@ -18,21 +18,26 @@ import { replace } from 'connected-react-router'
 export const Register = (props: any) => {  
     const usernameField = useRef<any>()
     const passwordField = useRef<any>()
+    const privateKeyField = useRef<any>()
     const [phraseCopied, setPhraseCopied] = useState(false)
     const [working, setWorking] = useState(false)
     const [username, setUsername] = useState('')
     const [password, setPassword] = useState('')
+    const [privateKey, setPrivateKey] = useState('')
     const [phrase, setPhrase] = useState('')
     const [error, setError] = useState('')
     const [showPassword, setShowPassword] = useState(false)
     const [showPhrase, setShowPhrase] = useState(false)
+    const [showWallet, setShowWallet] = useState(false)
     const registerEvent: any = useEvent()
+    const importEvent: any = useEvent()
     const dispatch = useDispatch()
 
     const GRADIENTS = {
-      "steel": "bg-gradient-to-r from-blue-gray-900 via-purple-900 to-blue-gray-900",
+      "steel": "bg-gradient-to-r from-primary via-violet-900 to-purple-800",
       "ocean": "bg-gradient-to-tr from-green-300 via-blue-500 to-purple-600",
-      "field": "bg-gradient-to-r from-yellow-200 via-green-200 to-green-500"
+      "field": "bg-gradient-to-r from-blue-700 via-green-800 to-green-500",
+      "berry": "bg-gradient-to-r from-purple-800 via-violet-900 to-purple-800"
     }
 
     // const [plan, setPlan] = useState<any>('')
@@ -57,6 +62,12 @@ export const Register = (props: any) => {
       setPassword(p.target.value)
     }
 
+    const onPrivateKeyChange = (p: any) => {
+      privateKeyField.current.focus()
+      setError('')
+      setPrivateKey(p.target.value)
+    }
+
     const checkAvailable = async () => {
       setWorking(true)
 
@@ -74,7 +85,12 @@ export const Register = (props: any) => {
     }
 
     const getStarted = async () => {
-      dispatch(replace('/dashboard'))
+      setShowWallet(true)
+    }
+
+    const importPrivateKey = async () => {
+      setWorking(true)
+      importEvent.send({ type: 'importPrivateKey', privateKey })
     }
 
     const copyPhrase = async () => {
@@ -111,6 +127,17 @@ export const Register = (props: any) => {
       setWorking(false)
 
     }, [registerEvent.received])
+
+    useEffect(() => {
+      if (!importEvent.received.id) return      
+
+      if (importEvent.received.error) {
+        setError(importEvent.received.error)
+        return
+      }
+
+      dispatch(replace('/dashboard'))
+    }, [importEvent.received])
 
     const imgPath = (name: string, type: string = 'png') => require(`../../../assets/${name}.${type}`).default
 
@@ -150,6 +177,18 @@ export const Register = (props: any) => {
       </div>
     )
 
+    const showWalletForm = () => (
+      <div className={tw("w-1/3 bg-white rounded-lg p-8 flex flex-col w-full justify-center")}>
+          <h2 className={tw("text-gray-900 text-2xl mb-1 font-medium title-font")}> Enter Your EOS Private Key </h2>
+          <div className={tw("relative mb-4")}>
+            <input autoFocus ref={privateKeyField} type="password" onChange={onPrivateKeyChange} value={privateKey} className={tw("w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8")}/>
+          </div>
+          { privateKey && <button onClick={importPrivateKey} className={tw("text-white bg-primary border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded text-lg")}>
+            Import Now
+          </button> }
+      </div>
+    )
+
     const showError = () => {
       if (!error) return <div/>
       return (<div className={tw("bg-red-200 relative text-red-500 py-3 px-3 rounded-lg text-medium")}>
@@ -166,13 +205,15 @@ export const Register = (props: any) => {
         )
       }
 
-      return  showPhrase ? showPhraseForm() : showPassword ? showPasswordForm() : showUsernameForm()
+      return  showWallet ? showWalletForm() : showPhrase ? showPhraseForm() : showPassword ? showPasswordForm() : showUsernameForm()
     }
 
     const FormIntro = () => (
       <div className={tw("w-2/3 p-12")}>
         <p className={tw("leading-relaxed mb-5 text-white text-2xl")}>
-          { showPhrase ? 
+          { showWallet ? 
+            'Import your EOS Private Key and start interacting with the EOS Blockchain. You only have to do this once and your private key is stored securely into your Carmel Vault.' :
+            showPhrase ? 
             'Your Carmel Recovery Phrase allows you to restore your account in case you lose your Carmel Private Key. Copy it and save it somewhere safe.' : 
             showPassword ? 
             'Your Carmel Password secures your local Carmel Vault protected by 5 layers of security. Your sensitive data like Blockchain private keys is all stored securely in your local Carmel Vault, on this computer.' : 
@@ -189,16 +230,15 @@ export const Register = (props: any) => {
             <FormDetails/>
         </div>
     </div>)
-
     
-    const gradient = showPhraseForm ? "field" : showPassword ? "ocean" : "steel"
-    return (<div className={tw(`bg-cover bg-bottom min-h-screen w-full ${GRADIENTS[gradient]}`)} style={{ 
-    }}>         
+    const gradient = showWallet ? "berry" : showPhrase ? "field" : showPassword ? "ocean" : "steel"
+      console.log(">>>>>", gradient)
 
-        <div className={tw(`w-full min-h-screen bg-black bg-opacity-70 text-white text-4xl flex flex-col items-center`)}>
+    return (<div className={tw(`bg-cover bg-bottom min-h-screen w-full ${GRADIENTS[gradient]}`)}>         
+        <div className={tw(`w-full min-h-screen text-white text-4xl flex flex-col items-center`)}>
             <UserCircleIcon className={tw("h-24 w-25 text-white mt-20")}/>
             <p className={tw("animTitle leading-relaxed text-white text-5xl")}>
-              { showPhrase ? 'Save Your Carmel Recovery Phrase' : showPassword ? `@${username}` :  'Get Your Carmel ID'}
+              { showWallet ? 'Setup Your EOS Wallet' : showPhrase ? 'Save Your Carmel Recovery Phrase' : showPassword ? `@${username}` :  'Get Your Carmel ID'}
             </p>
             { showError() }
             <Form/>
