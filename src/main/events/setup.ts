@@ -135,6 +135,7 @@ export const setup = async (e: any) => {
         id: e.id, 
         type: 'setupDone', 
         mnemonic, 
+        publicKey,
         session: system.session,
         username, 
         status: 'Your Carmel Environment Is Ready', 

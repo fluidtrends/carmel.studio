@@ -23,21 +23,22 @@ export const Register = (props: any) => {
     const [working, setWorking] = useState(false)
     const [username, setUsername] = useState('')
     const [password, setPassword] = useState('')
-    const [privateKey, setPrivateKey] = useState('')
+    const [publicKey, setPublicKey] = useState('')
+    // const [privateEOSKey, setPrivateEOSKey] = useState('')
     const [phrase, setPhrase] = useState('')
     const [error, setError] = useState('')
     const [showPassword, setShowPassword] = useState(false)
     const [showPhrase, setShowPhrase] = useState(false)
-    const [showWallet, setShowWallet] = useState(false)
+    // const [showWallet, setShowWallet] = useState(false)
     const registerEvent: any = useEvent()
     const importEvent: any = useEvent()
+    const sigupEvent: any = useEvent()
     const dispatch = useDispatch()
 
     const GRADIENTS = {
       "steel": "bg-gradient-to-r from-primary via-violet-900 to-purple-800",
       "ocean": "bg-gradient-to-tr from-green-300 via-blue-500 to-purple-600",
-      "field": "bg-gradient-to-r from-blue-700 via-green-800 to-green-500",
-      "berry": "bg-gradient-to-r from-purple-800 via-violet-900 to-purple-800"
+      "field": "bg-gradient-to-r from-blue-700 via-green-800 to-green-500"
     }
 
     // const [plan, setPlan] = useState<any>('')
@@ -62,11 +63,11 @@ export const Register = (props: any) => {
       setPassword(p.target.value)
     }
 
-    const onPrivateKeyChange = (p: any) => {
-      privateKeyField.current.focus()
-      setError('')
-      setPrivateKey(p.target.value)
-    }
+    // const onPrivateEOSKeyChange = (p: any) => {
+    //   privateKeyField.current.focus()
+    //   setError('')
+    //   setPrivateEOSKey(p.target.value)
+    // }
 
     const checkAvailable = async () => {
       setWorking(true)
@@ -84,19 +85,24 @@ export const Register = (props: any) => {
       setShowPassword(true)
     }
 
-    const getStarted = async () => {
-      setShowWallet(true)
+    const signup = async () => {
+      setWorking(true)
+      importEvent.send({ type: 'register', publicKey, username })
     }
 
-    const importPrivateKey = async () => {
-      setWorking(true)
-      importEvent.send({ type: 'importPrivateKey', privateKey })
-    }
+    // const getStarted = async () => {
+      // setShowWallet(true)
+    // }
+
+    // const importPrivateEOSKey = async () => {
+    //   setWorking(true)
+    //   importEvent.send({ type: 'importPrivateKey', privateKey: privateEOSKey })
+    // }
 
     const copyPhrase = async () => {
       clipboard.writeText(phrase)
       setPhraseCopied(true)
-      setTimeout(getStarted, 1000)
+      setTimeout(signup, 1000)
     }
 
     const createPhrase = async () => {
@@ -112,7 +118,7 @@ export const Register = (props: any) => {
         return
       }
 
-      const { mnemonic, session } = registerEvent.received
+      const { mnemonic, publicKey, session } = registerEvent.received
 
       if (!mnemonic) {
         setError('The registration failed')
@@ -123,21 +129,44 @@ export const Register = (props: any) => {
 
       dispatch(initialize({ session, products: [], profile: { } }))      
       setPhrase(mnemonic)
+      setPublicKey(publicKey)
       setShowPhrase(true)
       setWorking(false)
 
     }, [registerEvent.received])
 
-    useEffect(() => {
-      if (!importEvent.received.id) return      
+    // useEffect(() => {
+    //   if (!importEvent.received.id) return      
 
-      if (importEvent.received.error) {
-        setError(importEvent.received.error)
+    //   if (importEvent.received.error) {
+    //     setError(importEvent.received.error)
+    //     return
+    //   }
+
+    //   const { wallet } = importEvent.received
+
+    //   if (!wallet) {
+    //     setError('The key import failed')
+    //     setWorking(false)
+    //     setTimeout(() => { setError('') }, 2000)
+    //     return 
+    //   }
+
+    //   signup(wallet)
+    // }, [importEvent.received])
+
+    useEffect(() => {
+      if (!sigupEvent.received.id) return      
+
+      if (sigupEvent.received.error) {
+        setError(sigupEvent.received.error)
         return
       }
 
-      dispatch(replace('/dashboard'))
-    }, [importEvent.received])
+      console.log(sigupEvent.received)
+
+      // dispatch(replace('/dashboard'))
+    }, [sigupEvent.received])
 
     const imgPath = (name: string, type: string = 'png') => require(`../../../assets/${name}.${type}`).default
 
@@ -177,17 +206,17 @@ export const Register = (props: any) => {
       </div>
     )
 
-    const showWalletForm = () => (
-      <div className={tw("w-1/3 bg-white rounded-lg p-8 flex flex-col w-full justify-center")}>
-          <h2 className={tw("text-gray-900 text-2xl mb-1 font-medium title-font")}> Enter Your EOS Private Key </h2>
-          <div className={tw("relative mb-4")}>
-            <input autoFocus ref={privateKeyField} type="password" onChange={onPrivateKeyChange} value={privateKey} className={tw("w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8")}/>
-          </div>
-          { privateKey && <button onClick={importPrivateKey} className={tw("text-white bg-primary border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded text-lg")}>
-            Import Now
-          </button> }
-      </div>
-    )
+    // const showWalletForm = () => (
+    //   <div className={tw("w-1/3 bg-white rounded-lg p-8 flex flex-col w-full justify-center")}>
+    //       <h2 className={tw("text-gray-900 text-2xl mb-1 font-medium title-font")}> Enter Your EOS Private Key </h2>
+    //       <div className={tw("relative mb-4")}>
+    //         <input autoFocus ref={privateKeyField} type="password" onChange={onPrivateEOSKeyChange} value={privateEOSKey} className={tw("w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8")}/>
+    //       </div>
+    //       { privateEOSKey && <button onClick={importPrivateEOSKey} className={tw("text-white bg-primary border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded text-lg")}>
+    //         Import Now
+    //       </button> }
+    //   </div>
+    // )
 
     const showError = () => {
       if (!error) return <div/>
@@ -205,15 +234,13 @@ export const Register = (props: any) => {
         )
       }
 
-      return  showWallet ? showWalletForm() : showPhrase ? showPhraseForm() : showPassword ? showPasswordForm() : showUsernameForm()
+      return  showPhrase ? showPhraseForm() : showPassword ? showPasswordForm() : showUsernameForm()
     }
 
     const FormIntro = () => (
       <div className={tw("w-2/3 p-12")}>
         <p className={tw("leading-relaxed mb-5 text-white text-2xl")}>
-          { showWallet ? 
-            'Import your EOS Private Key and start interacting with the EOS Blockchain. You only have to do this once and your private key is stored securely into your Carmel Vault.' :
-            showPhrase ? 
+          { showPhrase ? 
             'Your Carmel Recovery Phrase allows you to restore your account in case you lose your Carmel Private Key. Copy it and save it somewhere safe.' : 
             showPassword ? 
             'Your Carmel Password secures your local Carmel Vault protected by 5 layers of security. Your sensitive data like Blockchain private keys is all stored securely in your local Carmel Vault, on this computer.' : 
@@ -231,14 +258,13 @@ export const Register = (props: any) => {
         </div>
     </div>)
     
-    const gradient = showWallet ? "berry" : showPhrase ? "field" : showPassword ? "ocean" : "steel"
-      console.log(">>>>>", gradient)
+    const gradient = showPhrase ? "field" : showPassword ? "ocean" : "steel"
 
     return (<div className={tw(`bg-cover bg-bottom min-h-screen w-full ${GRADIENTS[gradient]}`)}>         
         <div className={tw(`w-full min-h-screen text-white text-4xl flex flex-col items-center`)}>
             <UserCircleIcon className={tw("h-24 w-25 text-white mt-20")}/>
             <p className={tw("animTitle leading-relaxed text-white text-5xl")}>
-              { showWallet ? 'Setup Your EOS Wallet' : showPhrase ? 'Save Your Carmel Recovery Phrase' : showPassword ? `@${username}` :  'Get Your Carmel ID'}
+              { showPhrase ? 'Save Your Carmel Recovery Phrase' : showPassword ? `@${username}` :  'Get Your Carmel ID'}
             </p>
             { showError() }
             <Form/>
