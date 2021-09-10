@@ -3,6 +3,8 @@ import { carmel } from './commands'
 import * as system from '../system'
 import path from 'path'
 import fs from 'fs'
+import { createAccount, getAccountsFromPrivateKey, chain, DEFAULT_URL } from '@carmel/eos/src/eos'
+import e from 'express'
 
 // export const createNewIdentity = async (credentials: any) => {
 //     // system.reload()
@@ -273,6 +275,8 @@ export const importPrivateKey = async (data: any) => {
     const env = system.env()
     const isLocked = env.lock.exists
 
+    console.log(data)
+
     if (isLocked) {
         await send({ 
             id: data.id,
@@ -283,17 +287,39 @@ export const importPrivateKey = async (data: any) => {
     }
 
     const { privateKey, privateKeyType } = data 
-    const keyType = privateKeyType || "EOS"    
+    const keyType = (privateKeyType || "eos").toLowerCase()    
      
+    let wallet = Object.assign({}, system.session.wallet)
+    let publicKey = ''
+
+    if (keyType === 'eos') {
+        try { 
+            const eosWallet = await getAccountsFromPrivateKey({ privateKey })
+            wallet.eos = Object.assign({}, eosWallet)
+            publicKey = wallet.eos.publicKey
+            console.log(wallet)
+
+            system.update({ wallet })
+        } catch (e) {
+            console.log(e)
+            await send({ 
+                id: data.id,
+                type: 'importPrivateKeyError',
+                error: 'Could not retrieve key details'
+            })
+        }
+    }
+
     const oldKeys = await system.getSecret('wallet')
     const newKeys = Object.assign({}, oldKeys)
     newKeys[keyType] = newKeys[keyType] || []
-    newKeys[keyType].push({ privateKey })
+    newKeys[keyType].push({ privateKey, publicKey })
 
     await system.setSecret('wallet', newKeys)
 
     await send({ 
         id: data.id,
-        type: 'importPrivateKey',
+        type: 'importPrivateKeyError',
+        wallet
     })
 }

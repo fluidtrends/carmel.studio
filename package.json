@@ -1,7 +1,7 @@
 {
   "name": "carmel",
   "productName": "carmel",
-  "version": "1.11.1",
+  "version": "1.11.2",
   "description": "Carmel Studio",
   "main": ".webpack/main",
   "scripts": {
@@ -145,7 +145,7 @@
     "@babel/plugin-proposal-private-methods": "^7.12.1",
     "@babel/plugin-transform-runtime": "^7.12.10",
     "@babel/preset-env": "^7.12.10",
-    "@carmel/eos": "^1.1.0",
+    "@carmel/eos": "^1.1.1",
     "@carmel/js": "^1.2.0",
     "@carmel/sdk": "^1.11.2",
     "@hapi/hapi": "^20.0.3",
