@@ -13,7 +13,6 @@ import { Video } from '../components'
 // import { tw } from 'twind'
 import { ArrowRightIcon } from '@heroicons/react/solid'
 
-
 // import { tw } from 'twind'
 // const { 0 } = twind
 // console.log(twind)
@@ -42,6 +41,7 @@ export const Welcome: React.FC<WelcomeScreenProps> = (props) => {
   const [time, setTime] = useState(0)
   const [isDone, setDone] = useState(false)
   const [videoIsDone, setVideoIsDone] = useState(false)
+  // const carmel = useMesh({})
 
   useAnimatedText(['animTitle', ['animSubtitle', 'intro'], ['animButton', 'bounce', { button: true }]])
   const session = useSelector((state: State) => state.session)

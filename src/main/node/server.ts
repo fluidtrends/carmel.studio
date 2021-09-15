@@ -6,17 +6,31 @@ import cookieParser from 'cookie-parser'
 import http from 'http'
 import path from 'path'
 import getPort from 'get-port'
+// import { Session } from '@carmel/mesh'
+import debug from 'debug'
+import { ipfsConfig } from './config'
+import { conditionalExpression } from '@babel/types'
 
+const LOG = debug("carmel:studio")
 export class Server {
     private _app: any 
     private _port: number 
     private _env: any
     private _runner: any
+    // private _session: Session
 
     constructor(env: any) {
         this._app = express()
         this._env = env
+
+        // this._session = new Session({
+        //     isOperator: false
+        // })
     }
+
+    // get session() {
+    //     return this._session
+    // }
 
     get app() {
         return this._app
@@ -67,6 +81,25 @@ export class Server {
         // this.app.use(passport.session())
     }
 
+    async startNode () {
+        // const mesh = await this.session.node.resolveMesh()
+        const repo = `.cache_ipfs`
+        LOG('spawning..... IPFS node')
+        console.log(">>>>>Dddd")
+        const config = ipfsConfig({}, repo)
+     
+        // const { ipfsBin } = config 
+        // const { createFactory } = require('ipfsd-ctl')
+ 
+        // const factory = createFactory(config, { js: { ipfsBin } })
+        // const ipfs = await factory.spawn()
+ 
+        LOG('spawned IPFS node')
+        console.log(">>>>>Dd333333333dd")
+
+        // await this.session.start(ipfs)
+     }
+
     async start() {
         await this.init()
 
@@ -80,6 +113,8 @@ export class Server {
             console.log("**** Server Started on port", this.port, "...")
             r()
         }))
+
+        await this.startNode()
     }
 
     async stop() {

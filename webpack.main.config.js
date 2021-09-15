@@ -8,8 +8,8 @@ module.exports = {
     rules: require('./webpack.rules'),
   },
   node: {
-    __dirname: false,
-    __filename: false,
+    __dirname: true,
+    __filename: true,
   },
   resolve: {
     extensions: ['.js', '.ts', '.jsx', '.tsx', '.css', '.json'],

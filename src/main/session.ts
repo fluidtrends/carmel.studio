@@ -26,6 +26,7 @@ export const secretsVault = () => {
     return _vault
 }
 
+
 export const exists = () => {
     return system.env().home.exists && fs.existsSync(path.resolve(system.env().home.path, sessionFile))
 }
@@ -47,6 +48,7 @@ export const load = (skipEnv: boolean = false) => {
         env
     }
 }
+
 
 export const init = async() => {
     const { instanceId } = load(true)
