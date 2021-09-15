@@ -8,6 +8,10 @@ export const history = createHashHistory({
     getUserConfirmation: (message, callback) => callback(window.confirm(message))
 })
 
+// export const history = createHashHistory({
+    // window
+// })
+
 export const initializeStore = (preloadedState: any) => {
     const store = createStore(
         initializeReducers(history),
