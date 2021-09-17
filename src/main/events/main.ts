@@ -3,7 +3,6 @@ import * as system from '../system'
 import fs from 'fs'
 import path from 'path'
 import readdir from "recursive-readdir"
-import { eos } from '../services/blockchain'
 import { _resolveChallenge } from './challenges'
 import { installBundle } from '../services/files'
 import { carmel } from './commands'
@@ -31,73 +30,73 @@ export const hideWebPreview = async () => {
 }
 
 export const _loadUser = async (data: any) => {
-    const now = Date.now()
-    let sys: any = data.system
-    let env: any
+    // const now = Date.now()
+    // let sys: any = data.system
+    // let env: any
 
-    if (!sys) {
-        system.reload()
-        env = system.env()
-        sys = system
-    }
+    // if (!sys) {
+    //     system.reload()
+    //     env = system.env()
+    //     sys = system
+    // }
 
-    const result = await eos.read("carmelsystem", "carmelsystem", "users", ["name", "secondary", data.username])
+    // const result = await eos.read("carmelsystem", "carmelsystem", "users", ["name", "secondary", data.username])
 
-    if (!result || !result.rows || result.rows.length === 0) {
-        throw new Error("User not found")
-    }
+    // if (!result || !result.rows || result.rows.length === 0) {
+    //     throw new Error("User not found")
+    // }
 
-    const tokens = await eos.balances({ account: data.account })
+    // const tokens = await eos.balances({ account: data.account })
 
-    let user = {
-        ...result.rows[0],
-        tokens
-    }
+    // let user = {
+    //     ...result.rows[0],
+    //     tokens
+    // }
 
-    let skills = { } as any
-    (user.skills || []).map((s: any) => skills[s.key] = s.value)
+    // let skills = { } as any
+    // (user.skills || []).map((s: any) => skills[s.key] = s.value)
    
-    user.skills = skills
+    // user.skills = skills
 
-    sys.update({ 
-        loadedTimestamp: now,
-        user
-    })
+    // sys.update({ 
+    //     loadedTimestamp: now,
+    //     user
+    // })
 
-    return user
+    // return user
 }
 
 const _loadProfile = async (user: any, env: any, product?: any) => {    
-    let result = await eos.read("carmelsystem", user.account, "progress", ['name', 'secondary', user.username])
-    let all = (result && result.rows && result.rows.length > 0) ? result.rows : []
+    // let result = await eos.read("carmelsystem", user.account, "progress", ['name', 'secondary', user.username])
+    // let all = (result && result.rows && result.rows.length > 0) ? result.rows : []
  
-    let sorted: any = {}
+    // let sorted: any = {}
 
-    // Resolve local challenges
-    all = all.filter((c: any) => product ? (product.id === c.product_id) : true)
-                      .map((c: any) => ({
-                            ...c,
-                            bundle: c.bundle_name,
-                            name: c.challenge_name,
-                            challengeVersion: c.challenge_version
-                      }))
-                      .map((c: any) => _resolveChallenge({ env, challenge: c, version: c.challengeVersion }))
+    // // Resolve local challenges
+    // all = all.filter((c: any) => product ? (product.id === c.product_id) : true)
+    //                   .map((c: any) => ({
+    //                         ...c,
+    //                         bundle: c.bundle_name,
+    //                         name: c.challenge_name,
+    //                         challengeVersion: c.challenge_version
+    //                   }))
+    //                   .map((c: any) => _resolveChallenge({ env, challenge: c, version: c.challengeVersion }))
     
-    // Install missing bundles
-    await Promise.all(all.map((c: any) => c.bundle.exists ? Promise.resolve() : installBundle({ id: c.bundle.id, version: c.bundle.version })))
+    // // Install missing bundles
+    // await Promise.all(all.map((c: any) => c.bundle.exists ? Promise.resolve() : installBundle({ id: c.bundle.id, version: c.bundle.version })))
     
-    // Resolve again
-    all = all.map((c: any) => _resolveChallenge({ env, challenge: c, version: c.bundle.version }))
+    // // Resolve again
+    // all = all.map((c: any) => _resolveChallenge({ env, challenge: c, version: c.bundle.version }))
 
-    // Organize by product and completion
-    all.map((c: any) => {
-        sorted[c.product_id] = sorted[c.product_id] || { completed: [], inProgress: []}
-        sorted[c.product_id][(c.isCompleted ? "completed" : "inProgress")].push(c)
-    })
+    // // Organize by product and completion
+    // all.map((c: any) => {
+    //     sorted[c.product_id] = sorted[c.product_id] || { completed: [], inProgress: []}
+    //     sorted[c.product_id][(c.isCompleted ? "completed" : "inProgress")].push(c)
+    // })
 
-    const data = await _loadUser({ username: user.username })
+    // const data = await _loadUser({ username: user.username })
 
-    return { challenges: sorted, ...data }
+    // return { challenges: sorted, ...data }
 }
 
 const _parseProductFiles = (files: any) => {
@@ -238,7 +237,7 @@ export const load = async (data: any) => {
     let profile = {}
 
     if (session.user) {
-        profile = await _loadProfile(session.user, env, product)
+        // profile = await _loadProfile(session.user, env, product)
     }
 
     await send(Object.assign({}, { 

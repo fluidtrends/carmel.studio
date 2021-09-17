@@ -23,19 +23,19 @@ export const ipfsConfig: any = (Swarm: string[], repo: string) => {
         remote: false,
         ipfsHttpModule: require('ipfs-http-client'),
         ipfsBin: require.resolve('ipfs/src/cli.js'),
-        type: 'proc',
+        type: 'js',
         ipfsOptions: {
             repo,
             libp2p: libp2pConfig(),
             config: {
                 Addresses: {
                     Swarm: [
-                      '/ip4/0.0.0.0/tcp/4002',
-                      '/ip4/127.0.0.1/tcp/4003/ws'
+                      '/ip4/0.0.0.0/tcp/4102',
+                      '/ip4/127.0.0.1/tcp/4103/ws'
                     ].concat(Swarm),
-                    API: '/ip4/127.0.0.1/tcp/5002',
-                    Gateway: '/ip4/127.0.0.1/tcp/9090',
-                    RPC: '/ip4/127.0.0.1/tcp/5003',
+                    API: '/ip4/127.0.0.1/tcp/5102',
+                    Gateway: '/ip4/127.0.0.1/tcp/9190',
+                    RPC: '/ip4/127.0.0.1/tcp/5103',
                 }
             }
         }
