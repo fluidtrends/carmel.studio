@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { connect, Provider, useDispatch } from 'react-redux'
-import * as eos from '@carmel/eos/src'
+import * as eos from '@carmel/eos'
 
 import { ConnectedRouter } from 'connected-react-router'
 import { initializeStore,  history } from './data'

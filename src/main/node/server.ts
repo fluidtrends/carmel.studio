@@ -2,14 +2,21 @@ import passport from 'passport'
 import express, { Express } from 'express'
 import bodyParser from 'body-parser'
 import cors from 'cors'
+import { asset } from '../assets'
 import cookieParser from 'cookie-parser'
 import http from 'http'
 import path from 'path'
 import getPort from 'get-port'
-// import { Session } from '@carmel/mesh'
+import { Session } from '@carmel/mesh'
 import debug from 'debug'
 import { ipfsConfig } from './config'
 import { conditionalExpression } from '@babel/types'
+import fs from 'fs-extra'
+
+const USER_HOME = process.env[(process.platform === 'win32') ? 'USERPROFILE' : 'HOME']
+const CARMEL_HOME = path.resolve(USER_HOME, '.carmel')
+const CARMEL_ENV = path.resolve(CARMEL_HOME, 'env')
+const CARMEL_JS_ENV = path.resolve(CARMEL_ENV, 'js')
 
 const LOG = debug("carmel:studio")
 export class Server {
@@ -17,20 +24,20 @@ export class Server {
     private _port: number 
     private _env: any
     private _runner: any
-    // private _session: Session
+    private _session: Session
 
     constructor(env: any) {
         this._app = express()
         this._env = env
 
-        // this._session = new Session({
-        //     isOperator: false
-        // })
+        this._session = new Session({
+            isOperator: false
+        })
     }
 
-    // get session() {
-    //     return this._session
-    // }
+    get session() {
+        return this._session
+    }
 
     get app() {
         return this._app
@@ -81,24 +88,22 @@ export class Server {
         // this.app.use(passport.session())
     }
 
-    async startNode () {
-        // const mesh = await this.session.node.resolveMesh()
+    async startNode () {         
+        const mesh = await this.session.node.resolveMesh()
         const repo = `.cache_ipfs`
-        LOG('spawning..... IPFS node')
-        console.log(">>>>>Dddd")
-        const config = ipfsConfig({}, repo)
-     
-        // const { ipfsBin } = config 
-        // const { createFactory } = require('ipfsd-ctl')
- 
-        // const factory = createFactory(config, { js: { ipfsBin } })
-        // const ipfs = await factory.spawn()
- 
-        LOG('spawned IPFS node')
-        console.log(">>>>>Dd333333333dd")
+        const config = ipfsConfig(mesh.swarm, repo)
 
-        // await this.session.start(ipfs)
-     }
+        try {
+            const { ipfsBin } = config 
+            const { createFactory } = require('ipfsd-ctl')
+            const factory = createFactory(config, { js: { ipfsBin } })
+            const ipfs = await factory.spawn()
+            const all = await ipfs.api.id()
+            await this.session.start(ipfs)
+        } catch (err) {
+            console.error(err);
+        }
+    }
 
     async start() {
         await this.init()

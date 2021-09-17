@@ -1,11 +1,11 @@
 {
   "name": "carmel",
   "productName": "carmel",
-  "version": "1.11.2",
+  "version": "1.11.3",
   "description": "Carmel Studio",
   "main": ".webpack/main",
   "scripts": {
-    "start": "electron-forge start",
+    "start": "DEBUG=\"carmel*\" electron-forge start",
     "package": "electron-forge package",
     "make": "electron-forge make",
     "publish": "electron-forge publish",
@@ -23,9 +23,6 @@
     "email": "idancalinescu@gmail.com"
   },
   "license": "MIT",
-  "carmel": {
-    "env": "test"
-  },
   "build": {
     "asar": false
   },
@@ -145,7 +142,7 @@
     "@babel/plugin-proposal-private-methods": "^7.12.1",
     "@babel/plugin-transform-runtime": "^7.12.10",
     "@babel/preset-env": "^7.12.10",
-    "@carmel/mesh": "^1.1.0",
+    "@carmel/mesh": "^1.1.2",
     "@hapi/hapi": "^20.0.3",
     "@heroicons/react": "^1.0.4",
     "@react-native-community/async-storage": "^1.11.0",
@@ -198,6 +195,7 @@
     "connected-react-router": "^6.8.0",
     "cookie-parser": "^1.4.5",
     "cors": "^2.8.5",
+    "crypto-js": "^4.1.1",
     "decompress": "^4.2.1",
     "decompress-targz": "^4.1.1",
     "deep-extend": "^0.6.0",

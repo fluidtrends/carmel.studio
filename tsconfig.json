@@ -13,7 +13,10 @@
     "moduleResolution": "node",
     "resolveJsonModule": true,
     "paths": {
-      "*": ["node_modules/*"]
+      "*": ["node_modules/*"],
+      "crypto": [
+        "./node_modules/crypto-js"
+      ]
     }
   },
   "include": [

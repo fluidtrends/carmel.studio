@@ -10,7 +10,7 @@ import { encode, decode } from 'js-base64'
 import requireFromString from 'require-from-string'
 import { dialog } from 'electron'
 
-import { eos } from '../services/blockchain'
+// import { eos } from '../services/blockchain'
 import { connectAdvanced } from 'react-redux'
 
 ///////
@@ -63,25 +63,25 @@ export const _resolveTemplate = (data: any) => {
 ///////
 
 export const listTemplates = async (data: any) => {
-    const result = await eos.read("carmelsystem", "carmelsystem", "templates")
+    // const result = await eos.read("carmelsystem", "carmelsystem", "templates")
     
-    const templates = result.rows.map((t: any) => {
-        let latestVersion: string = "0.0.1" as string
+    // const templates = result.rows.map((t: any) => {
+    //     let latestVersion: string = "0.0.1" as string
 
-        (t.versions || []).map((version: string) => {
-            latestVersion = semver.gt(version, latestVersion) ? version : latestVersion
-        })
+    //     (t.versions || []).map((version: string) => {
+    //         latestVersion = semver.gt(version, latestVersion) ? version : latestVersion
+    //     })
 
-        return Object.assign({}, t, t.versions.length > 0 &&  { latestVersion })
-    })
+    //     return Object.assign({}, t, t.versions.length > 0 &&  { latestVersion })
+    // })
 
-    console.log(templates)
+    // console.log(templates)
 
-    await send({ 
-        id: data.id,
-        type: 'listTemplates',
-        templates
-    })
+    // await send({ 
+    //     id: data.id,
+    //     type: 'listTemplates',
+    //     templates
+    // })
 }
 
 export const createProduct = async (data: any) => {
