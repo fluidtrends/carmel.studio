@@ -38,10 +38,10 @@ export const toggle = () => {
 
 export const hideBrowser = () => {
   try {
-    if (!browserView || browserView.isDestroyed()) return 
+    // if (!browserView || browserView.isDestroyed()) return 
 
-    browserView.setBounds({ x: 0, y: 0, width: 0, height: 0 })
-    browserView.destroy()
+    // browserView.setBounds({ x: 0, y: 0, width: 0, height: 0 })
+    // browserView.destroy()
   } catch (e) {
   }
 }
@@ -93,13 +93,14 @@ export const create = () => {
     frame: true,
     fullscreenable: true,
     resizable: true,
-    title: "Carmel Studio",
+    title: "Carmel",
     transparent: false,
     webPreferences: {
       preload: MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY,
       nodeIntegration: true,
       backgroundThrottling: false,
-      webviewTag: true
+      contextIsolation: false,
+      webviewTag: false
     }
   })
 
@@ -110,7 +111,7 @@ export const create = () => {
   })
 
   window.on('resize', function () {
-      if (!browserView || browserView.isDestroyed()) return 
+      // if (!browserView || browserView.isDestroyed()) return 
 
       const { width, height } = window.getBounds()
 

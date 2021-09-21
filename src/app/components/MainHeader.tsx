@@ -34,7 +34,10 @@ export const MainHeader: React.FC<MainHeaderComponentProps> = (props) => {
   const [section, setSection] = useState("products")
   const dispatch = useDispatch()
   const session = useSelector((state: State) => state.session)
+  const s = useSelector((state: State) => state)
   const browser: any = useEvent()
+
+  console.log("SSSS", s)
 
   const notifications: any = {
       carmel: [],
@@ -170,6 +173,8 @@ export const MainHeader: React.FC<MainHeaderComponentProps> = (props) => {
             </Badge>
         </Dropdown>)
   }
+
+  console.log(session)
   return (<div style={{ 
     display: "flex",
     flexDirection: "column",

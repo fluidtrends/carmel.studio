@@ -25,7 +25,7 @@ if (typeof window !== `undefined`) {
 
 const store = initializeStore({})
 const persistor = persistStore(store)
-persistor.purge()
+// persistor.purge()
 
 
 const Routes = (props: any) => {

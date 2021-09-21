@@ -10,7 +10,6 @@ import getPort from 'get-port'
 import { Session } from '@carmel/mesh/src'
 import debug from 'debug'
 import { ipfsConfig } from './config'
-import { conditionalExpression } from '@babel/types'
 import fs from 'fs-extra'
 import * as handlers from './handlers'
 
@@ -112,7 +111,7 @@ export class Server {
         LOG('starting node ...')
 
         const relays = await this.session.server.resolveRelays()
-        const config = ipfsConfig(relays, `${this.root}/ipfs`, [4902, 4903, 5902, 5903, 9990])
+        const config = ipfsConfig(relays, `${this.root}ipfs`, [4902, 4903, 5902, 5903, 9990])
 
         try {
             const { ipfsBin } = config 
@@ -127,7 +126,8 @@ export class Server {
      
             await this.session.start(ipfs)
         } catch (err) {
-            LOG('node could not start', err.message)
+            LOG('node could not start:', err.message)
+            console.log(err)
         }
     }
 
@@ -143,12 +143,24 @@ export class Server {
         this._runner = new http.Server(this.app)
         
         await new Promise((r) => this.runner.listen(this.port, async () => {
-            await this.startNode()
             LOG("server Started on port", this.port)
             
-            await this.session.server.send.ping({ message: "Hello from Studio" })
             r("")
         }))
 
+        await this.startNode()
+        await this.send.ping({ message: "Hello from Studio" })
+    }
 
+    get send () {
+        return this.session.server.send
+    }
+
+    get push () {
+        return this.session.server._push
+    }
+
+    get pull () {
+        return this.session.server._pull
+    }
 }

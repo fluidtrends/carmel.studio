@@ -31,7 +31,6 @@ export const Register = (props: any) => {
     const [showPhrase, setShowPhrase] = useState(false)
     // const [showWallet, setShowWallet] = useState(false)
     const registerEvent: any = useEvent()
-    const importEvent: any = useEvent()
     const sigupEvent: any = useEvent()
     const dispatch = useDispatch()
 
@@ -87,7 +86,7 @@ export const Register = (props: any) => {
 
     const signup = async () => {
       setWorking(true)
-      importEvent.send({ type: 'register', publicKey, username })
+      sigupEvent.send({ type: 'register', publicKey, username })
     }
 
     // const getStarted = async () => {
@@ -163,9 +162,7 @@ export const Register = (props: any) => {
         return
       }
 
-      console.log(sigupEvent.received)
-
-      // dispatch(replace('/dashboard'))
+      dispatch(replace('/dashboard'))
     }, [sigupEvent.received])
 
     const imgPath = (name: string, type: string = 'png') => require(`../../../assets/${name}.${type}`).default

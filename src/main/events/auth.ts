@@ -47,7 +47,7 @@ import { createAccount, chain, DEFAULT_URL } from '@carmel/eos/src/eos'
 /////
 
 export const register = async (credentials: any) => {
-    const { publicKey, username, wallet } = credentials
+    const { publicKey, username } = credentials
 
     // system.reload()
     // const env: any = system.env()
@@ -62,8 +62,23 @@ export const register = async (credentials: any) => {
     //     return
     // }
 
-    // const wallet = await system.getSecret('wallet')
-    // const identity = await system.getSecret('identity')
+    const wallet = await system.getSecret('wallet')
+    const { privateKey } = await system.getSecret('identity')
+
+    const { cid } = await system.server.push("account", { username, publicKey })
+    const ecc = require('eosjs-ecc')
+    const signature = ecc.sign(`0:${cid}`, privateKey)
+
+    system.server.send.system({
+        call: "register",
+        data: {
+            publicKey,
+            username,
+            signature,
+            cid
+        }
+    })
+
     // console.log(system.session, system.env, wallet, identity)
 
     // if (!wallet || !wallet.eos || !identity) {
