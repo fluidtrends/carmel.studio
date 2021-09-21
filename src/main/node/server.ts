@@ -12,12 +12,14 @@ import debug from 'debug'
 import { ipfsConfig } from './config'
 import { conditionalExpression } from '@babel/types'
 import fs from 'fs-extra'
+import * as handlers from './handlers'
 
 const USER_HOME = process.env[(process.platform === 'win32') ? 'USERPROFILE' : 'HOME']
 const CARMEL_HOME = path.resolve(USER_HOME, '.carmel')
 const CARMEL_ENV = path.resolve(CARMEL_HOME, 'env')
 const CARMEL_JS_ENV = path.resolve(CARMEL_ENV, 'js')
 const DEFAULT_ROOT = `${process.env[(process.platform === 'win32') ? 'USERPROFILE' : 'HOME']}/.carmel/mesh-main/`
+const DEFAULT_REVISION = `1a`
 
 const LOG = debug("carmel:studio")
 export class Server {
@@ -37,6 +39,8 @@ export class Server {
 
         this._session = new Session({
             isOperator: false,
+            revision: DEFAULT_REVISION,
+            handlers,
             root: this.root
         })
     }
@@ -141,6 +145,8 @@ export class Server {
         await new Promise((r) => this.runner.listen(this.port, async () => {
             await this.startNode()
             LOG("server Started on port", this.port)
+            
+            await this.session.server.send.ping({ message: "Hello from Studio" })
             r("")
         }))
 
