@@ -34,7 +34,6 @@ export const Dashboard: React.FC<any> = (props) => {
     justifyContent: "flex-start",
     flexWrap: "wrap"
   }}>
-    Welcome
 
   </div>)
 }

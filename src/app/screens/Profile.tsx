@@ -90,6 +90,7 @@ export const Profile: React.FC<any> = (props) => {
 
   return (<AccountSection 
     title="Profile"
+    id="account"
     fields={fields}
     icon={IdentificationIcon}/>)
 }

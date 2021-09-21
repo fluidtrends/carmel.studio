@@ -18,6 +18,8 @@ export const AccountSection: React.FC<any> = (props: any) => {
   const [isEditing, setIsEditing] = useState(false)
   const [fields, setFields] = useState<any>({})
   const [isWorking, setIsWorking] = useState(true)
+  const saveEvent: any = useEvent()
+  const [error, setError] = useState('')
 
   // const session = useSelector((state: State) => state.session)
   const dispatch = useDispatch()
@@ -25,11 +27,28 @@ export const AccountSection: React.FC<any> = (props: any) => {
   useEffect(() => {  
   }, [])
 
+  useEffect(() => {
+    if (!saveEvent.received.id) return      
+
+    console.log(saveEvent.received)
+
+    if (saveEvent.received.error) {
+      setIsWorking(false)
+      setIsEditing(true)
+      setError(saveEvent.received.error)
+      setTimeout(() => { setError('') }, 2000)
+      return
+    }
+
+    setIsWorking(false)
+
+  }, [saveEvent.received])
+
+
   const imgPath = (name: string, type: string = 'png') => require(`../../../assets/${name}.${type}`).default
  
   useEffect(() => {
     if (!props.fields) return 
-    console.log(props.fields)
     setFields(props.fields)
     setIsWorking(false)
   }, [])
@@ -64,6 +83,13 @@ export const AccountSection: React.FC<any> = (props: any) => {
 
   const onSave = () => {
     setIsEditing(false)
+    
+    if (!props.id) {
+      return 
+    }
+
+    setIsWorking(true)
+    saveEvent.send({ type: 'saveAccount', section: props.id, data: { ...fields }})
   }
 
   const onBack = () => {
@@ -72,11 +98,18 @@ export const AccountSection: React.FC<any> = (props: any) => {
     
   const gradient = "bg-gradient-to-t from-primary-100 via-primary to-gray-900"
 
-
   if (isWorking) {
     return (
       <svg className={tw("animate-spin h-12 w-12 text-white mr-3 bg-primary")} viewBox="0 0 24 24">
     </svg>    )
+  }
+
+
+  const showError = () => {
+    if (!error) return <div/>
+    return (<div className={tw("bg-red-200 relative text-red-500 py-3 px-3 rounded-lg text-medium")}>
+        { error }
+    </div>)
   }
 
   return (<div className={tw(`w-full min-h-screen text-white text-4xl flex flex-col items-center w-full h-full ${gradient}`)}>
@@ -85,6 +118,7 @@ export const AccountSection: React.FC<any> = (props: any) => {
             <p className={tw("leading-relaxed text-white text-3xl")}>
               { props.title }
             </p>
+            { showError() }
           </div>
           <div className={tw(`bg-white overflow-auto w-4/5 p-10 text-xl h-5/6 m-8 mx-auto item-center flex flex-col`)}>            
            { Object.keys(fields).map((key: string) => renderField(key)) }
