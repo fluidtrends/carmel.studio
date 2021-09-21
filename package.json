@@ -142,7 +142,7 @@
     "@babel/plugin-proposal-private-methods": "^7.12.1",
     "@babel/plugin-transform-runtime": "^7.12.10",
     "@babel/preset-env": "^7.12.10",
-    "@carmel/mesh": "^1.1.2",
+    "@carmel/mesh": "^1.1.5",
     "@hapi/hapi": "^20.0.3",
     "@heroicons/react": "^1.0.4",
     "@react-native-community/async-storage": "^1.11.0",
