@@ -13,9 +13,10 @@ import { useEvent } from '../hooks'
 export const Dashboard: React.FC<any> = (props) => {
   const dispatch = useDispatch()
   const selectEvent: any = useEvent() 
-  const session = useSelector((state: State) => state.session) 
+  const session = useSelector((state: State) => state) 
 
   useEffect(() => {
+    console.log("----->", session)
     if (!session || !session.env) {
       return 
     }

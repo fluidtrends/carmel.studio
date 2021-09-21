@@ -15,7 +15,7 @@
     "paths": {
       "*": ["node_modules/*"],
       "crypto": [
-        "./node_modules/crypto-js"
+        "node_modules/crypto-js"
       ]
     }
   },

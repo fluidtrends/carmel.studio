@@ -1,3 +1,4 @@
+
 export const libp2pConfig: any = () => {
     const WebRTCStar = require('libp2p-webrtc-star')
     const wrtc = require('wrtc')
@@ -21,9 +22,9 @@ export const ipfsConfig: any = (Swarm: string[], repo: string, ports: number[] =
     return {
         ipfsModule: require('ipfs'),
         remote: false,
+        type: "proc",
         ipfsHttpModule: require('ipfs-http-client'),
         ipfsBin: require.resolve('ipfs/src/cli.js'),
-        type: 'proc',
         ipfsOptions: {
             repo,
             libp2p: libp2pConfig(),

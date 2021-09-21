@@ -1,6 +1,7 @@
-import { ipcRenderer } from 'electron'
+// import { ipcRenderer } from 'electron'
 import { useLayoutEffect, useRef, useState, useEffect } from 'react'
 import shortid from 'shortid'
+const { ipcRenderer } = require('electron')
 
 export const useEvent = () => {
     let [received, setReceived] = useState({})

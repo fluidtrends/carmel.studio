@@ -1,5 +1,7 @@
 import { start, quit } from './system'
 
-process.env.DEBUG="carmel*"
+process.on('warning', (warning) => {
+    // console.log(warning.stack)
+})
 
 require('electron-squirrel-startup') ? quit() : start()

@@ -1,6 +1,6 @@
 import React, { useEffect, useCallback, useState } from 'react'
 import { Card, Typography, Button, Result, List, Progress, Spin } from 'antd'
-import * as strings from '../../strings.json'
+import strings from '../../strings.json'
 import { Header, Task } from '.'
 
 const { Meta } = Card
