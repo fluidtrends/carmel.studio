@@ -7,7 +7,7 @@ import cookieParser from 'cookie-parser'
 import http from 'http'
 import path from 'path'
 import getPort from 'get-port'
-import { Session } from '@carmel/mesh'
+import { Session } from '@carmel/mesh/src'
 import debug from 'debug'
 import { ipfsConfig } from './config'
 import { conditionalExpression } from '@babel/types'
@@ -17,6 +17,7 @@ const USER_HOME = process.env[(process.platform === 'win32') ? 'USERPROFILE' : '
 const CARMEL_HOME = path.resolve(USER_HOME, '.carmel')
 const CARMEL_ENV = path.resolve(CARMEL_HOME, 'env')
 const CARMEL_JS_ENV = path.resolve(CARMEL_ENV, 'js')
+const DEFAULT_ROOT = `${process.env[(process.platform === 'win32') ? 'USERPROFILE' : 'HOME']}/.carmel/mesh-main/`
 
 const LOG = debug("carmel:studio")
 export class Server {
@@ -25,14 +26,23 @@ export class Server {
     private _env: any
     private _runner: any
     private _session: Session
+    private _root: string 
 
     constructor(env: any) {
         this._app = express()
         this._env = env
+        this._root = DEFAULT_ROOT
+
+        fs.existsSync(this.root) || fs.mkdirpSync(this.root)
 
         this._session = new Session({
-            isOperator: false
+            isOperator: false,
+            root: this.root
         })
+    }
+
+    get root () {
+        return this._root
     }
 
     get session() {
@@ -88,40 +98,51 @@ export class Server {
         // this.app.use(passport.session())
     }
 
+    async stop () {
+        LOG('stopping node')
+        
+        await this.session.stop()
+    }
+
     async startNode () {         
-        const mesh = await this.session.node.resolveMesh()
-        const repo = `.cache_ipfs`
-        const config = ipfsConfig(mesh.swarm, repo)
+        LOG('starting node ...')
+
+        const relays = await this.session.server.resolveRelays()
+        const config = ipfsConfig(relays, `${this.root}/ipfs`, [4902, 4903, 5902, 5903, 9990])
 
         try {
             const { ipfsBin } = config 
             const { createFactory } = require('ipfsd-ctl')
+
             const factory = createFactory(config, { js: { ipfsBin } })
+            LOG('spawning IPFS gateway ...')
+
             const ipfs = await factory.spawn()
-            const all = await ipfs.api.id()
+
+            LOG('spawned IPFS gateway')
+     
             await this.session.start(ipfs)
         } catch (err) {
-            console.error(err);
+            LOG('node could not start', err.message)
         }
     }
 
     async start() {
+        LOG('starting server ...')
+
         await this.init()
 
-        // this.app.get('/', (req: any, res: any) => {
-        //     console.log(req)
-        // })
+        this.app.get('/', (req: any, res: any) => {
+            console.log(req)
+        })
 
         this._runner = new http.Server(this.app)
         
         await new Promise((r) => this.runner.listen(this.port, async () => {
-            console.log("**** Server Started on port", this.port, "...")
-            r()
+            await this.startNode()
+            LOG("server Started on port", this.port)
+            r("")
         }))
 
-        await this.startNode()
-    }
 
-    async stop() {
-    }
 }

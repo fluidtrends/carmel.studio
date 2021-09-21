@@ -15,7 +15,7 @@ export const libp2pConfig: any = () => {
     return libp2p
 }
 
-export const ipfsConfig: any = (Swarm: string[], repo: string) => {
+export const ipfsConfig: any = (Swarm: string[], repo: string, ports: number[] = [4902, 4903, 5902, 5903, 9990]) => {
     process.env.IPFS_PATH = repo
     
     return {
@@ -23,19 +23,19 @@ export const ipfsConfig: any = (Swarm: string[], repo: string) => {
         remote: false,
         ipfsHttpModule: require('ipfs-http-client'),
         ipfsBin: require.resolve('ipfs/src/cli.js'),
-        type: 'js',
+        type: 'proc',
         ipfsOptions: {
             repo,
             libp2p: libp2pConfig(),
             config: {
                 Addresses: {
                     Swarm: [
-                      '/ip4/0.0.0.0/tcp/4102',
-                      '/ip4/127.0.0.1/tcp/4103/ws'
+                      `/ip4/0.0.0.0/tcp/${ports[0]}`,
+                      `/ip4/127.0.0.1/tcp/${ports[1]}/ws`
                     ].concat(Swarm),
-                    API: '/ip4/127.0.0.1/tcp/5102',
-                    Gateway: '/ip4/127.0.0.1/tcp/9190',
-                    RPC: '/ip4/127.0.0.1/tcp/5103',
+                    API: `/ip4/127.0.0.1/tcp/${ports[2]}`,
+                    RPC: `/ip4/127.0.0.1/tcp/${ports[3]}`,
+                    Gateway: `/ip4/127.0.0.1/tcp/${ports[4]}`
                 }
             }
         }
