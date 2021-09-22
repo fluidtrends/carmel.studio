@@ -163,4 +163,12 @@ export class Server {
     get pull () {
         return this.session.server._pull
     }
+
+    get identity() {
+        return this.session.identity
+    }
+
+    get gateway() {
+        return this.session
+    }
 }

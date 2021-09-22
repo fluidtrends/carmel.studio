@@ -160,15 +160,6 @@ const _loadProduct = async (productId: any, system: any, env: any) => {
 
 /////
 
-export const saveAccount = async (data: any) => {
-    console.log(data)
-
-    await send({ 
-        id: data.id, 
-        type: 'saveAccount', 
-        error: "Oops"
-    })
-}
 
 export const startSession = async (data: any) => {
     system.reload()

@@ -1,8 +1,8 @@
 import { send, _loadUser } from './main'
 import { carmel } from './commands'
 import * as system from '../system'
-
 import { createAccount, chain, DEFAULT_URL } from '@carmel/eos/src/eos'
+const ecc = require('eosjs-ecc')
 
 /////
 
@@ -46,6 +46,56 @@ import { createAccount, chain, DEFAULT_URL } from '@carmel/eos/src/eos'
 
 /////
 
+const _sign = async (message: string) => {
+    const { privateKey } = await system.getSecret('identity')
+    if (!privateKey) return 
+    
+    return ecc.sign(message, privateKey)
+}
+
+
+export const fetchIdentity = async (data: any) => {
+     const identity = await system.server.gateway.fetchIdentity(data.username)
+    
+     await send({ 
+        id: data.id, 
+        type: 'fetchIdentity', 
+        identity: identity ? identity.data : false
+    })
+}
+
+export const saveAccount = async (props: any) => {
+    const data: any = {}
+    Object.keys(props.data).map((k: string) => data[k] = props.data[k].value)
+
+    const update = await system.server.identity.update(data, _sign)
+    console.log(update)
+    // const { privateKey } = await system.getSecret('identity')
+
+    // const identity = await system.server.chain.getId()
+    // const account = await system.server.pull("account", { username, publicKey })
+
+    // const { cid } = await system.server.push("account", { username, publicKey })
+    // const ecc = require('eosjs-ecc')
+    // const signature = ecc.sign(`0:${cid}`, privateKey)
+
+    // system.server.send.system({
+    //     call: "register",
+    //     data: {
+    //         publicKey,
+    //         username,
+    //         signature,
+    //         cid
+    //     }
+    // })
+
+    await send({ 
+        id: props.id, 
+        type: 'saveAccount', 
+        error: "Oops"
+    })
+}
+
 export const register = async (credentials: any) => {
     const { publicKey, username } = credentials
 
@@ -62,46 +112,9 @@ export const register = async (credentials: any) => {
     //     return
     // }
 
-    const wallet = await system.getSecret('wallet')
-    const { privateKey } = await system.getSecret('identity')
-
-    const { cid } = await system.server.push("account", { username, publicKey })
-    const ecc = require('eosjs-ecc')
-    const signature = ecc.sign(`0:${cid}`, privateKey)
-
-    system.server.send.system({
-        call: "register",
-        data: {
-            publicKey,
-            username,
-            signature,
-            cid
-        }
-    })
-
-    // console.log(system.session, system.env, wallet, identity)
-
-    // if (!wallet || !wallet.eos || !identity) {
-    //     await send({ 
-    //         id: credentials.id,
-    //         type: 'registerError',
-    //         noWallet: true
-    //     })
-    //     return 
-    // }
-
-    // const did = "0:init"
-    // const carmelChain = chain({ url: DEFAULT_URL, keys: { main: { id: wallet.eos.accounts[0].id, private: privateEOSKey }}}) 
-    // const result = await createAccount(carmelChain, username, publicKey, did)
-
-    // // Create the user
-    // await eos.system.call("newuser", {
-    //     account: credentials.account,
-    //     username: credentials.username,
-    //     fullname: credentials.fullname || credentials.username,
-    //     machine_id: env.machine.id,
-    //     details: "{}",
-    // }, credentials.privateKey)
+    await system.server.identity.create({
+        publicKey, username
+    }, _sign)
 
     // if (credentials.plan.requiredTokens > 0) {
     //     // Make a payment
@@ -118,11 +131,9 @@ export const register = async (credentials: any) => {
     // // Log the user in
     // const user = await _doLogin(credentials)
 
-    // console.log(result)
-
     await send({ 
         id: credentials.id,
-        type: 'registerSuccess'
+        type: 'eventSent'
     })
 }
 
