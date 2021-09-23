@@ -31,6 +31,7 @@ export const Register = (props: any) => {
     const [showPhrase, setShowPhrase] = useState(false)
     // const [showWallet, setShowWallet] = useState(false)
     const registerEvent: any = useEvent()
+    const fetchEvent: any = useEvent()
     const sigupEvent: any = useEvent()
     const dispatch = useDispatch()
 
@@ -70,18 +71,7 @@ export const Register = (props: any) => {
 
     const checkAvailable = async () => {
       setWorking(true)
-
-      const id = await props.eos.getId(props.chains.anon, username)
- 
-      if (id) {
-        setError('The username is not available')
-        setWorking(false)
-        setTimeout(() => { setError('') }, 2000)
-        return 
-      }
-
-      setWorking(false)
-      setShowPassword(true)
+      fetchEvent.send({ type: 'fetchIdentity', username })
     }
 
     const signup = async () => {
@@ -108,6 +98,25 @@ export const Register = (props: any) => {
       setWorking(true)
       registerEvent.send({ type: 'setup', username, password })
     }
+
+    useEffect(() => {
+      if (!fetchEvent.received.id) return      
+
+      if (fetchEvent.received.error) {
+        setError(fetchEvent.received.error)
+        return
+      }
+
+      if (fetchEvent.received.identity) {
+        setError('The username is not available')
+        setWorking(false)
+        setTimeout(() => { setError('') }, 2000)
+        return 
+      }
+
+      setWorking(false)
+      setShowPassword(true)
+    }, [fetchEvent.received])
 
     useEffect(() => {
       if (!registerEvent.received.id) return      

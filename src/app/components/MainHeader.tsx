@@ -123,7 +123,6 @@ export const MainHeader: React.FC<MainHeaderComponentProps> = (props) => {
               { MENUITEMS.map((item: any, i: number) => 
                   <li className={tw("w-full")} key={i}>
                     <a onClick={() => onUserDropdownSelect(item)} className={tw(`${i === 0 || i === MENUITEMS.length - 1 ? 'rounded-t': ''} w-full pl-2 bg-white hover:bg-primary-100 py-2 block whitespace-no-wrap hover:text-primary flex flex-row`)}>
-                      <item.icon className={tw("h-5 w-5 mr-2")}/>
                       { item.title }
                     </a>
                   </li>

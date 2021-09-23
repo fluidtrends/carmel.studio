@@ -37,6 +37,7 @@ export const Start: React.FC<StartScreenProps> = (props) => {
       return 
     }
 
+    dispatch(initialize({ session, products: [], profile: { } }))      
     const screen = session.productId ? '/product' : '/dashboard'
     dispatch(replace(screen))
   }, [loadEvent.received])

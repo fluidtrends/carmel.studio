@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react'
 import { connect, Provider, useDispatch } from 'react-redux'
-import * as eos from '@carmel/eos'
 
 import { ConnectedRouter } from 'connected-react-router'
 import { initializeStore,  history } from './data'
@@ -30,9 +29,6 @@ const persistor = persistStore(store)
 
 const Routes = (props: any) => {
   const [width, height] = useWindowSize()
-  const chains = {
-    anon: eos.anonChain()
-  }
 
   return (
     <Switch>
@@ -47,8 +43,6 @@ const Routes = (props: any) => {
               height={height}
               style={styles.container}>
                   <Screen {...props }
-                      eos={eos}
-                      chains={chains}
                       width={width}
                       height={height}
                       style={styles.screen}
