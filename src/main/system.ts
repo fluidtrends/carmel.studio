@@ -23,6 +23,7 @@ export const userHome = process.env[(process.platform === 'win32') ? 'USERPROFIL
 export const env = () => {
   const home = path.resolve(userHome, '.carmel')
   const secrets = path.resolve(home, 'secrets')
+  const settings = path.resolve(home, 'settings')
   const lock = path.resolve(home, 'secrets', '.data', '.lock')
   const cache = path.resolve(home, 'cache')
   const bin = path.resolve(home, 'bin')
@@ -40,6 +41,7 @@ export const env = () => {
     cache: { path: cache, exists: fs.existsSync(cache) },
     sdk: { path: sdk, exists: fs.existsSync(sdk) },
     secrets: { path: secrets, exists: fs.existsSync(secrets) },
+    settings: { path: settings, exists: fs.existsSync(settings) },
     node: { path: node, exists: fs.existsSync(node) },
     lock: { path: lock, exists: fs.existsSync(lock) },
     servers: { path: servers, exists: fs.existsSync(servers) },
@@ -50,7 +52,7 @@ export const env = () => {
 
 export const reload = () => {
   session = _session.load()
-  server = server || new Server(env())
+  server = server || new Server()
 }
 
 export const update = (data: any) => {
@@ -58,18 +60,31 @@ export const update = (data: any) => {
   reload()
 }
 
+const _onMeshResponse = async (data: any) => {
+  if (!data || !data.carmel || !data.carmel.id) {
+    return 
+  }
+ 
+  await send({ 
+    id: data.carmel.id,
+    data
+  })
+}
+
+export const mesh = {
+  onResponse: _onMeshResponse,
+  send: async (channel: string, { id, data, type }: any, carmel: any) => server.session.station.channel(channel).sendEvent(id, { ...data, carmel }, type || "request")
+}
+
 export const lock = async (pass: string) => _session.lock(pass)
 export const unlock = async (pass: string) => _session.unlock(pass)
 export const setSecret = async (key: string, values: any) => _session.setSecret(key, values)
 export const getSecret = async (key: string) => _session.getSecret(key)
+export const setSetting = async (key: string, values: any) => _session.setSetting(key, values)
+export const getSetting = async (key: string) => _session.getSetting(key)
 
-export const init = async (data: any, password: string) => {  
-  const instanceId = nanoid()
+export const start = async () => {
   await _session.create()
-  update({ ...data, instanceId })
-}
-
-export const start = () => {
   reload()
   
   ipcMain.on('carmel', async (e, data) => {
@@ -107,5 +122,10 @@ export const start = () => {
       window.hide()
       await server.stop()
     }
+  })
+
+  app.on('before-quit', async () => {
+    window.hide()
+    await server.stop()
   })
 }

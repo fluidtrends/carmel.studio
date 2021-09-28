@@ -55,21 +55,22 @@ const _sign = async (message: string) => {
 
 
 export const fetchIdentity = async (data: any) => {
-     const identity = await system.server.gateway.fetchIdentity(data.username)
+    //  const identity = await system.server.gateway.fetchIdentity(data.username)
     
-     await send({ 
-        id: data.id, 
-        type: 'fetchIdentity', 
-        identity: identity ? identity.data : false
-    })
+    //  await send({ 
+    //     id: data.id, 
+    //     type: 'fetchIdentity', 
+    //     identity: identity ? identity.data : false
+    // })
 }
 
 export const saveAccount = async (props: any) => {
     const data: any = {}
     Object.keys(props.data).map((k: string) => data[k] = props.data[k].value)
 
-    const update = await system.server.identity.update(data, _sign)
-    console.log(update)
+    const result = await system.mesh.send("stats:utils", { id: "time", data: { format: "YYYY" } }, { id: props.id })
+    // const update = await system.server.identity.update(data, _sign)
+    // console.log(update)
     // const { privateKey } = await system.getSecret('identity')
 
     // const identity = await system.server.chain.getId()
@@ -92,7 +93,7 @@ export const saveAccount = async (props: any) => {
     await send({ 
         id: props.id, 
         type: 'saveAccount', 
-        error: "Oops"
+        result
     })
 }
 
@@ -112,9 +113,9 @@ export const register = async (credentials: any) => {
     //     return
     // }
 
-    await system.server.identity.create({
-        publicKey, username
-    }, _sign)
+    // await system.server.identity.create({
+    //     publicKey, username
+    // }, _sign)
 
     // if (credentials.plan.requiredTokens > 0) {
     //     // Make a payment
