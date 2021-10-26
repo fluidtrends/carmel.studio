@@ -14,6 +14,27 @@
             "endpoint": "http://api.eosn.io"
         } 
     },
+    "menu": [{
+        "id": "Posts",
+        "title": "Posts",
+        "icon": "NewspaperIcon",
+        "tabs": ["Drafts", "Published"]
+    }, {
+        "id": "Files",
+        "title": "Files",
+        "icon": "DocumentTextIcon",
+        "tabs": ["Local", "Public"]
+    }, {
+        "id": "Cities",
+        "icon": "LibraryIcon",
+        "title": "Cities",
+        "tabs": ["My Cities", "Other"]
+    }, {
+        "id": "Friends",
+        "icon": "UserGroupIcon",
+        "title": "Friends",
+        "tabs": ["My Friends", "Find"]
+    }],
     "routes": [{
         "path": "/",
         "id": "start",

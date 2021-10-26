@@ -22,6 +22,7 @@ export const userHome = process.env[(process.platform === 'win32') ? 'USERPROFIL
 
 export const env = () => {
   const home = path.resolve(userHome, '.carmel')
+  const posts = path.resolve(home, 'posts')
   const secrets = path.resolve(home, 'secrets')
   const settings = path.resolve(home, 'settings')
   const lock = path.resolve(home, 'secrets', '.data', '.lock')
@@ -37,6 +38,7 @@ export const env = () => {
 
   return {
     home: { path: home, exists: fs.existsSync(home) },
+    posts: { path: posts, exists: fs.existsSync(posts) },
     bin: { path: bin, exists: fs.existsSync(bin) },
     cache: { path: cache, exists: fs.existsSync(cache) },
     sdk: { path: sdk, exists: fs.existsSync(sdk) },
@@ -89,9 +91,11 @@ export const start = async () => {
   
   ipcMain.on('carmel', async (e, data) => {
     try {
+      console.log("got", data)
       const eventType: keyof typeof events = data.type
       const event = events[eventType] 
       event && await event(data)     
+      console.log("EF:", event)
     } catch (e) {
       await send({ 
           id: data.id,

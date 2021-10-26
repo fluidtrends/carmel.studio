@@ -1,6 +1,19 @@
 body {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
 }
+.wrapper-class {
+  padding: 1rem;
+  background-color:#ffffff;
+}
+.editor-class {
+  background-color:#ffffff;
+  padding: 1rem;
+}
+
+.toolbar-class {
+  background-color:#ffffff;
+}
+
 .dropdown:hover .dropdown-menu {
   display: block;
 }

@@ -41,6 +41,7 @@ const Routes = (props: any) => {
           <Container 
               width={width}
               height={height}
+              {...props}
               style={styles.container}>
                   <Screen {...props }
                       width={width}
