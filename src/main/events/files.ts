@@ -135,8 +135,14 @@ export const savePostDraft = async (data: any) => {
     const metaFilename = path.resolve(postRoot, `meta.json`)
     const timestamp = `${Date.now()}`
 
+    const meta = {
+        ...data.post
+    }
+
+    delete meta.text
+
     fs.writeFileSync(htmlFilename, data.post.text || "", 'utf8')
-    fs.writeFileSync(metaFilename, JSON.stringify({ ...data.post, draft: true, timestamp }, null, 2), 'utf8')
+    fs.writeFileSync(metaFilename, JSON.stringify({ ...meta, draft: true, timestamp }, null, 2), 'utf8')
 
     await send({ 
         id: data.id,
