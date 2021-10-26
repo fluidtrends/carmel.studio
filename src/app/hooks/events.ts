@@ -12,7 +12,6 @@ export const useEvent = () => {
         const newId = shortid.generate()
         setId(newId)
         setType(type || event.type)
-        console.log("send event", newId, event)
         ipcRenderer.send('carmel', { id: newId, ...event })
         return newId
     }
@@ -20,7 +19,6 @@ export const useEvent = () => {
     useEffect(() => {
         (async () => {
             const listener = (e: any, data: any) => {
-                console.log("!got event", id, data)
                 if (id === data.id) {
                     setReceived(data) 
                 }

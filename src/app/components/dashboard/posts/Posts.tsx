@@ -45,15 +45,11 @@ export const Posts: React.FC<any> = (props) => {
 
   useEffect(() => {
    
-    console.log("FEE?????", fetchEvent)
     if(!fetchEvent.received.id) return
-    console.log("Fetch")
 
     const sorted = (fetchEvent.received.posts || []).sort((x: any, y: any) => {
       return y.timestamp - x.timestamp
     })
-
-    console.log(sorted)
 
     setPosts(sorted)
     setLoading(false)
@@ -71,6 +67,7 @@ export const Posts: React.FC<any> = (props) => {
   }, [saveEvent.received])
 
   useEffect(() => {
+    console.log(publishEvent)
     if(!publishEvent.received.id) return
 
     // const p: any = Object.assign({}, post)

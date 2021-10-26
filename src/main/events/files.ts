@@ -3,6 +3,7 @@ import path from 'path'
 import { send } from './main'
 import * as system from '../system'
 import { customAlphabet } from 'nanoid'
+import { push } from 'connected-react-router'
 
 const nanoid = customAlphabet('2345abcdefghijklmnopqrstuvwxyz', 12)
 const { dialog } = require('electron')
@@ -79,19 +80,11 @@ export const getPosts = async (data: any) => {
     const postIds = fs.readdirSync(env.posts.path).filter((f: any) => !f.startsWith("."))
     const posts = (postIds || []).map((id: string) => _loadPost(id, env.posts.path))
     
-    console.log("SEND?", data)
     await send({ 
         id: data.id,
         type: 'getPosts',
         posts
     })
-}
-
-const _pushDirToMesh = async (dir: string) => {
-    return {
-        hash: "test",
-        size: "5.02 mb"
-    }
 }
 
 export const publishPost = async (data: any) => {
@@ -110,20 +103,21 @@ export const publishPost = async (data: any) => {
         return 
     }
 
+    const result: any = await system.mesh.pushDir(postRoot, `posts/${draftId}`)
+
     const metaFile = path.resolve(postRoot, `meta.json`)
     const timestamp = `${Date.now()}`
     const metaContent = fs.readFileSync(metaFile, "utf8")
     const meta = JSON.parse(metaContent)
 
-    const { hash, size } = await _pushDirToMesh(postRoot)
-
     meta.published = meta.published || []
-    meta.published.push({ timestamp, hash, size })
+    meta.published.push({ timestamp, cid: result.cid.toString(), size: result.cumulativeSize })
 
     fs.writeFileSync(metaFile, JSON.stringify({ ...meta, draft: false, timestamp }, null, 2), 'utf8')
 
     await send({ 
         id: data.id,
+        result,
         type: 'publishPost'
     })
 }

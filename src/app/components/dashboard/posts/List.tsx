@@ -42,7 +42,7 @@ export const PostsList = ({ posts, onNew, onSelect, tab }: any) => {
                 <NewAction onNew={onNew} />
             </div>      
             <div className={tw("flex flex-wrap w-full h-full pb-20 overflow-y-scroll ")}>            
-              { all.map((p: any) => (<PostListItem tab={tab} {...p} onSelect={onSelect}/>))}
+              { all.map((p: any, i: number) => (<PostListItem index={i} tab={tab} {...p} onSelect={onSelect}/>))}
           </div>
       </div>)
   }

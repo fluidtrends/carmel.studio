@@ -75,7 +75,9 @@ const _onMeshResponse = async (data: any) => {
 
 export const mesh = {
   onResponse: _onMeshResponse,
-  send: async (channel: string, { id, data, type }: any, carmel: any) => server.session.station.channel(channel).sendEvent(id, { ...data, carmel }, type || "request")
+  send: async (channel: string, { id, data, type }: any, carmel: any) => server.session.station.channel(channel).sendEvent(id, { ...data, carmel }, type || "request"),
+  push: async (id: string, data: any) => server.session.drive.push(id, data),
+  pushDir: async (dir: string, base: string) => server.session.drive.pushDir(dir, base)
 }
 
 export const lock = async (pass: string) => _session.lock(pass)
@@ -91,11 +93,9 @@ export const start = async () => {
   
   ipcMain.on('carmel', async (e, data) => {
     try {
-      console.log("got", data)
       const eventType: keyof typeof events = data.type
       const event = events[eventType] 
       event && await event(data)     
-      console.log("EF:", event)
     } catch (e) {
       await send({ 
           id: data.id,
