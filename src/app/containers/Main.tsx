@@ -111,7 +111,9 @@ const ActionBar = () => (
  * @param props 
  */
 export const Main: React.FC<any> = (props) => {
-  const [section, setSection] = useState(props.menu[0])
+  const [menu, setMenu] = useState(props.menus.home.menu)
+  const [showSideMenu, setShowSideMenu] = useState(true)
+  const [section, setSection] = useState(props.menus.home.menu[0])
   const [tab, setTab] = useState(0)
 
   const onChangedSection = (s: any) => {
@@ -123,6 +125,14 @@ export const Main: React.FC<any> = (props) => {
     setTab(t)
   }
 
+  const onMenuChanged = (m: any) => {
+    setMenu(m.menu)
+    setSection(m.menu[0])
+    console.log(m)
+    setShowSideMenu(!m.hideSideMenu)
+    setTab(0)
+  }
+
   const childrenWithProps = (children: any, props: any) => Children.map(children, child => {
     if (isValidElement(child)) {
       return cloneElement(child, { ...props });
@@ -130,12 +140,14 @@ export const Main: React.FC<any> = (props) => {
     return child;
   });
 
+  console.log(menu)
+
   return (<div className={tw("font-sans antialiased flex flex-col h-screen flex")}>
-    <MainHeader />
+    <MainHeader menus={props.menus} onMenuChanged={onMenuChanged} />
     <div className={tw("flex flex-row bg-gray-100 overflow-hidden -mt-2")}>
-      <Sidebar onSelect={onChangedSection} section={section} menu={props.menu}/>
+      { showSideMenu && <Sidebar onSelect={onChangedSection} section={section} menu={menu}/> }
       <div className={tw("flex flex-row w-full h-full bg-gray-100")}>      
-           { childrenWithProps(props.children, { section, tab, setTab, onChangedTab }) }
+           { childrenWithProps(props.children, { section, menu, tab, setTab, onChangedTab }) }
       </div>
     </div>
   </div>)

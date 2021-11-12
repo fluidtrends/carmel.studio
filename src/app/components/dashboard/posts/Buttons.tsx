@@ -14,7 +14,7 @@ export const UploadButton = ({ onUpload, change }: any) => {
             </p>
          </a>
     </div>)
-  }
+}
   
 export  const ActionButton = ({ onSelect }: any) => {
       return (<div className={tw("")}>
@@ -27,7 +27,7 @@ export  const ActionButton = ({ onSelect }: any) => {
               </p>
            </a>
       </div>)
-  }
+}
   
 export const NewAction = ({ onNew }: any) => {
     return (<div className={tw("mr-4")}>
@@ -40,7 +40,7 @@ export const NewAction = ({ onNew }: any) => {
             </p>
          </a>
     </div>)
-  }
+}
   
 export const BackAction = ({ onBack, title }: any) => {
     return (<div className={tw("mr-4")}>
@@ -53,7 +53,7 @@ export const BackAction = ({ onBack, title }: any) => {
             </p>
          </a>
     </div>)
-  }
+}
   
 export const PublishAction = ({ onPublish }: any) => {
     return (<div className={tw("mr-4")}>
@@ -79,4 +79,4 @@ export const SaveAction = ({ onSave }: any) => {
             </p>
          </a>
     </div>)
-  }
+}

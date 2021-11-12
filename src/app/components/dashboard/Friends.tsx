@@ -7,6 +7,6 @@ export const Friends: React.FC<any> = (props) => {
   }, [])
 
   return (<div className={tw("flex flex-row flex-grow w-full h-full p-10")}>
-        Your Friends
+
   </div>)
 }

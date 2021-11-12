@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from 'react'
-import { ContentState, EditorState } from 'draft-js';
-import { convertToHTML } from 'draft-convert';
+import { ContentState, EditorState } from 'draft-js'
+import { convertToHTML } from 'draft-convert'
 import { useEvent } from '../../../hooks'
 import { Loading } from '../../../components/Loading'
 import { stateFromHTML } from 'draft-js-import-html'
 import { PostDraft } from './Draft'
 import { PostsList } from './List'
-import { sort } from 'semver';
 
 const { tw } = require('twind')
 
@@ -67,7 +66,6 @@ export const Posts: React.FC<any> = (props) => {
   }, [saveEvent.received])
 
   useEffect(() => {
-    console.log(publishEvent)
     if(!publishEvent.received.id) return
 
     // const p: any = Object.assign({}, post)
@@ -160,7 +158,7 @@ export const Posts: React.FC<any> = (props) => {
 
   if (loading) {
     return (<div className={tw("flex flex-col w-full")}>            
-        <Loading/>
+       return <Loading/>
     </div>)
   }
 

@@ -30,7 +30,8 @@ const { Title } = Typography
  * 
  * @param props 
  */
-export const MainHeader: React.FC<MainHeaderComponentProps> = (props) => {
+export const MainHeader: React.FC<any> = (props) => {
+  const [menuItem, setMenuItem] = useState("home")
   const [section, setSection] = useState("products")
   const dispatch = useDispatch()
   const session = useSelector((state: State) => state.session)
@@ -71,6 +72,11 @@ export const MainHeader: React.FC<MainHeaderComponentProps> = (props) => {
         const { key } = e
         browser.send({ type: 'hideWebPreview' })
         dispatch(replace(`/${key}`))  
+    }
+
+    const onChangeMenuItem = (m: any) => {
+      setMenuItem(m.id)
+      props.onMenuChanged (m)
     }
 
     // const onContent = (e: any) => {
@@ -158,6 +164,20 @@ export const MainHeader: React.FC<MainHeaderComponentProps> = (props) => {
 
   //  { session && session.user ? session.user.plan_name && session.user.plan_name !== "free" && <Tag color="green" style={{margin: 10}}> { session.user.plan_name.split('.')[0].toUpperCase() } </Tag> }
 
+
+  const topMenu = () => {
+    return Object.values(props.menus).map((m: any) => topMenuItem(m))
+  }
+
+  const topMenuItem = (menu: any) => {
+    const selected = menu.id === props.menus[menuItem].id
+    return <div className={tw(`hover:text-primary h-10 mt-12 text-gray-700 font-bold mr-8 cursor-pointer hover:border-b-4 hover:border-primary ${selected ? 'text-primary border-b-4 border-primary': ''}`)}
+                              onClick={() => onChangeMenuItem(menu) }>
+      { menu.title }
+  </div>
+  }
+
+
   const renderUserMenu = () => {
     return (<Dropdown overlay={accountMenu}>
             <Badge count={notifications.user.length} overflowCount={5} offset={[0, 2]}>
@@ -194,8 +214,8 @@ export const MainHeader: React.FC<MainHeaderComponentProps> = (props) => {
           flex: 1,
           justifyContent: "flex-start"
         }}>
-        <img src={asset('icon-216.png')} className={tw("w-14 h-14 ml-4 mt-8")}/>
-
+        <img src={asset('icon-216.png')} className={tw("w-14 h-14 ml-4 mt-8 mr-10")}/>
+        { topMenu() }
         </div>
         <div style={{
           display: "flex",
@@ -207,14 +227,3 @@ export const MainHeader: React.FC<MainHeaderComponentProps> = (props) => {
     </div>
   </div>)
 }
-
-{/* <Button icon={<SettingOutlined/>} size='large' onClick={onSettings} style={{
-              marginLeft: 10,
-              border: "none"
-            }}>
-          </Button>
-          <Button icon={<LockOutlined/>} size='large' onClick={onVault} style={{
-              marginLeft: 10,
-              border: "none"
-            }}>
-          </Button> */}

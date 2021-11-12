@@ -14,26 +14,126 @@
             "endpoint": "http://api.eosn.io"
         } 
     },
+    "menus": {
+        "home": {
+            "id": "home",
+            "title": "Home",
+            "menu": [{
+                "id": "Posts",
+                "title": "Posts",
+                "icon": "NewspaperIcon",
+                "tabs": ["Drafts", "Published"],
+                "empty": ["no-draft-posts.png", "no-published-posts.png"]
+            }, {
+                "id": "Files",
+                "title": "Files",
+                "icon": "DocumentTextIcon",
+                "tabs": ["Drafts", "Published"],
+                "empty": ["no-draft-posts.png", "no-published-posts.png"]
+            },{
+                "id": "Friends",
+                "icon": "UserGroupIcon",
+                "title": "Friends",
+                "tabs": ["Friends List", "Find Friends", "Invite Friends"],
+                "empty": ["no-draft-posts.png", "no-published-posts.png"]
+            }, {
+                "id": "Messages",
+                "icon": "ChatIcon",
+                "title": "Messages",
+                "tabs": ["Inbox", "Archived"],
+                "empty": ["no-draft-posts.png", "no-published-posts.png"]
+            }]
+        },
+        "cities": {
+            "id": "cities",
+            "title": "Cities",
+            "hideSideMenu": true,
+            "menu": [{
+                "id": "Map",
+                "title": "Map",
+                "icon": "NewspaperIcon",
+                "tabs": ["Map View", "List View"],
+                "empty": ["no-draft-posts.png", "no-published-posts.png"]
+             }     
+         ]
+        },
+        "studio": {
+            "id": "studio",
+            "title": "Studio",
+            "menu": [{
+                   "id": "Products",
+                   "title": "Products",
+                   "icon": "ViewGridIcon",
+                   "tabs": ["Your Products", "Shared", "Create Products"],
+                   "empty": ["no-draft-posts.png", "no-published-posts.png"]
+                },
+                {
+                    "id": "Elements",
+                    "title": "Elements",
+                    "icon": "CubeIcon",
+                    "tabs": ["Your Elements", "Shared", "Find Elements", "Create Elements"],
+                    "empty": ["no-draft-posts.png", "no-published-posts.png"]
+                 },
+                 {
+                    "id": "Challenges",
+                    "title": "Challenges",
+                    "icon": "ShieldCheckIcon",
+                    "tabs": ["Active", "Completed", "Find Challenges", "Create Challenges"],
+                    "empty": ["no-draft-posts.png", "no-published-posts.png"]
+                 },
+                 {
+                    "id": "Jobs",
+                    "title": "Jobs",
+                    "icon": "ClipboardListIcon",
+                    "tabs": ["Active", "Completed", "Find Jobs", "Post Jobs"],
+                    "empty": ["no-draft-posts.png", "no-published-posts.png"]
+                 },
+                 {
+                    "id": "Rewards",
+                    "title": "Rewards",
+                    "icon": "GiftIcon",
+                    "tabs": ["Claimed", "To Be Claimed"],
+                    "empty": ["no-draft-posts.png", "no-published-posts.png"]
+                 }
+            ]
+        }
+    },
     "menu": [{
-        "id": "Posts",
-        "title": "Posts",
-        "icon": "NewspaperIcon",
-        "tabs": ["Drafts", "Published"]
-    }, {
-        "id": "Files",
-        "title": "Files",
-        "icon": "DocumentTextIcon",
-        "tabs": ["Local", "Public"]
-    }, {
+            "id": "Home",
+            "title": "Home",
+            "icon": "NewspaperIcon",
+            "tabs": ["Drafts", "Published"],
+            "empty": ["no-draft-posts.png", "no-published-posts.png"]
+    },{
         "id": "Cities",
         "icon": "LibraryIcon",
         "title": "Cities",
-        "tabs": ["My Cities", "Other"]
+        "tabs": ["My Cities", "Other"],
+        "empty": ["no-draft-posts.png", "no-published-posts.png"]
     }, {
-        "id": "Friends",
-        "icon": "UserGroupIcon",
-        "title": "Friends",
-        "tabs": ["My Friends", "Find"]
+        "id": "Products",
+        "icon": "CubeIcon",
+        "title": "Products",
+        "tabs": ["My Products", "Discover"],
+        "empty": ["no-draft-posts.png", "no-published-posts.png"]
+    }, {
+        "id": "Challenges",
+        "icon": "AcademicCapIcon",
+        "title": "Challenges",
+        "tabs": ["Active", "Completed", "Discover"],
+        "empty": ["no-draft-posts.png", "no-published-posts.png", "no-draft-posts.png"]
+    }, {
+        "id": "Jobs",
+        "icon": "ClipboardCheckIcon",
+        "title": "Jobs",
+        "tabs": ["My Jobs", "Completed", "Discover"],
+        "empty": ["no-draft-posts.png", "no-published-posts.png", "no-draft-posts.png"]
+    }, {
+        "id": "Store",
+        "icon": "ShoppingCartIcon",
+        "title": "Store",
+        "tabs": ["My Purchases", "Elements", "Challenges", "Products"],
+        "empty": ["no-draft-posts.png", "no-published-posts.png", "no-draft-posts.png", "no-draft-posts.png"]
     }],
     "routes": [{
         "path": "/",
