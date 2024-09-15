@@ -111,7 +111,7 @@ export const create = () => {
   })
 
   window.on('resize', function () {
-      // if (!browserView || browserView.isDestroyed()) return 
+      if (!browserView || browserView.getBounds().height === 0) return 
 
       const { width, height } = window.getBounds()
 

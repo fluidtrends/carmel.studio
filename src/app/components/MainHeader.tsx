@@ -30,14 +30,13 @@ const { Title } = Typography
  * 
  * @param props 
  */
-export const MainHeader: React.FC<MainHeaderComponentProps> = (props) => {
+export const MainHeader: React.FC<any> = (props) => {
+  const [menuItem, setMenuItem] = useState("home")
   const [section, setSection] = useState("products")
   const dispatch = useDispatch()
   const session = useSelector((state: State) => state.session)
   const s = useSelector((state: State) => state)
   const browser: any = useEvent()
-
-  console.log("SSSS", s)
 
   const notifications: any = {
       carmel: [],
@@ -73,6 +72,11 @@ export const MainHeader: React.FC<MainHeaderComponentProps> = (props) => {
         const { key } = e
         browser.send({ type: 'hideWebPreview' })
         dispatch(replace(`/${key}`))  
+    }
+
+    const onChangeMenuItem = (m: any) => {
+      setMenuItem(m.id)
+      props.onMenuChanged (m)
     }
 
     // const onContent = (e: any) => {
@@ -119,7 +123,7 @@ export const MainHeader: React.FC<MainHeaderComponentProps> = (props) => {
               <span className={tw("mr-1")}>{ session.identity.username }</span>
               <ChevronDownIcon className={tw("h-5 w-5 ml-2")}/>
             </button>
-            <ul className={tw("dropdown-menu absolute hidden text-gray-400 pt-1 w-full")}>
+            <ul className={tw("dropdown-menu absolute hidden text-gray-400 pt-1 w-full border-1 border-gray-200")}>
               { MENUITEMS.map((item: any, i: number) => 
                   <li className={tw("w-full")} key={i}>
                     <a onClick={() => onUserDropdownSelect(item)} className={tw(`${i === 0 || i === MENUITEMS.length - 1 ? 'rounded-t': ''} w-full pl-2 bg-white hover:bg-primary-100 py-2 block whitespace-no-wrap hover:text-primary flex flex-row`)}>
@@ -160,6 +164,20 @@ export const MainHeader: React.FC<MainHeaderComponentProps> = (props) => {
 
   //  { session && session.user ? session.user.plan_name && session.user.plan_name !== "free" && <Tag color="green" style={{margin: 10}}> { session.user.plan_name.split('.')[0].toUpperCase() } </Tag> }
 
+
+  const topMenu = () => {
+    return Object.values(props.menus).map((m: any) => topMenuItem(m))
+  }
+
+  const topMenuItem = (menu: any) => {
+    const selected = menu.id === props.menus[menuItem].id
+    return <div className={tw(`hover:text-primary h-10 mt-12 text-gray-700 font-bold mr-8 cursor-pointer hover:border-b-4 hover:border-primary ${selected ? 'text-primary border-b-4 border-primary': ''}`)}
+                              onClick={() => onChangeMenuItem(menu) }>
+      { menu.title }
+  </div>
+  }
+
+
   const renderUserMenu = () => {
     return (<Dropdown overlay={accountMenu}>
             <Badge count={notifications.user.length} overflowCount={5} offset={[0, 2]}>
@@ -173,7 +191,6 @@ export const MainHeader: React.FC<MainHeaderComponentProps> = (props) => {
         </Dropdown>)
   }
 
-  console.log(session)
   return (<div style={{ 
     display: "flex",
     flexDirection: "column",
@@ -182,9 +199,8 @@ export const MainHeader: React.FC<MainHeaderComponentProps> = (props) => {
     height: 48,
     width: "100%",
     backgroundColor: "#ffffff",
-    boxShadow: "0px 1px 5px #c1c1c1",
     margin: "0px 0px 10px 0px",
-  }}>
+  }} className={tw("shadow-2xl")}>
      <div style={{ 
         padding: 20,
         display: "flex",
@@ -198,9 +214,8 @@ export const MainHeader: React.FC<MainHeaderComponentProps> = (props) => {
           flex: 1,
           justifyContent: "flex-start"
         }}>
-          <img src={asset('icon-32.png')} style={{
-            width: 28, height: 28 
-          }}/>
+        <img src={asset('icon-216.png')} className={tw("w-14 h-14 ml-4 mt-8 mr-10")}/>
+        { topMenu() }
         </div>
         <div style={{
           display: "flex",
@@ -212,14 +227,3 @@ export const MainHeader: React.FC<MainHeaderComponentProps> = (props) => {
     </div>
   </div>)
 }
-
-{/* <Button icon={<SettingOutlined/>} size='large' onClick={onSettings} style={{
-              marginLeft: 10,
-              border: "none"
-            }}>
-          </Button>
-          <Button icon={<LockOutlined/>} size='large' onClick={onVault} style={{
-              marginLeft: 10,
-              border: "none"
-            }}>
-          </Button> */}

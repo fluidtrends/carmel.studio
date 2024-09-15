@@ -114,8 +114,7 @@ export const setup = async (e: any) => {
 
     const now = Date.now()
 
-   await system.init({
-        createdTimestamp: now,
+    system.update({
         loadedTimestamp: now,
         identity,
         node: {
@@ -128,7 +127,7 @@ export const setup = async (e: any) => {
         },
         bundles: {
         }
-    }, e.password)    
+    })    
 
     await system.setSecret('identity', { privateKey, username })
     await send({ 

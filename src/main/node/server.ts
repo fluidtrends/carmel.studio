@@ -5,13 +5,15 @@ import cors from 'cors'
 import { asset } from '../assets'
 import cookieParser from 'cookie-parser'
 import http from 'http'
+import * as system from '../system'
 import path from 'path'
 import getPort from 'get-port'
 import { Session } from '@carmel/mesh/src'
 import debug from 'debug'
 import { ipfsConfig } from './config'
 import fs from 'fs-extra'
-import * as handlers from './handlers'
+import * as functions from './functions'
+import merge from 'deepmerge'
 
 const USER_HOME = process.env[(process.platform === 'win32') ? 'USERPROFILE' : 'HOME']
 const CARMEL_HOME = path.resolve(USER_HOME, '.carmel')
@@ -29,19 +31,12 @@ export class Server {
     private _session: Session
     private _root: string 
 
-    constructor(env: any) {
+    constructor() {
         this._app = express()
-        this._env = env
         this._root = DEFAULT_ROOT
+        this._env = system.env()
 
         fs.existsSync(this.root) || fs.mkdirpSync(this.root)
-
-        this._session = new Session({
-            isOperator: false,
-            revision: DEFAULT_REVISION,
-            handlers,
-            root: this.root
-        })
     }
 
     get root () {
@@ -73,6 +68,17 @@ export class Server {
     }
 
     async init() {
+        const channels = await system.getSetting('channels')
+
+        this._session = new Session({
+            isOperator: false,
+            channels,
+            revision: DEFAULT_REVISION,
+            root: this.root
+        })
+
+        this.session.registerFunctions(functions)
+
         this._port = await getPort()
         this.app.set('port', this.port)
         // this.app.set('views', this.dir.path!)
@@ -110,8 +116,8 @@ export class Server {
     async startNode () {         
         LOG('starting node ...')
 
-        const relays = await this.session.server.resolveRelays()
-        const config = ipfsConfig(relays, `${this.root}ipfs`, [4902, 4903, 5902, 5903, 9990])
+        const relays = await this.session.chain.fetch.relays()
+        const config = ipfsConfig(relays, `${this.root}/ipfs`, this.session.config.isOperator ? [4402, 4403, 5402, 5403, 9490] : [4302, 4303, 5302, 5303, 9390])
 
         try {
             const { ipfsBin } = config 
@@ -149,26 +155,5 @@ export class Server {
         }))
 
         await this.startNode()
-        await this.send.ping({ message: "Hello from Studio" })
-    }
-
-    get send () {
-        return this.session.server.send
-    }
-
-    get push () {
-        return this.session.server._push
-    }
-
-    get pull () {
-        return this.session.server._pull
-    }
-
-    get identity() {
-        return this.session.identity
-    }
-
-    get gateway() {
-        return this.session
     }
 }

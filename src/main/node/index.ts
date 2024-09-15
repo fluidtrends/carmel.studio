@@ -1,2 +1,2 @@
 export * from './server'
-import * as handlers from './handlers'
+import * as functions from './functions'
